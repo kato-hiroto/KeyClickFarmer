@@ -131,14 +131,14 @@ class WordCounter {
 
         // 特殊な称号
         if (this._unit > 0) {
-            if (this._keyCount / logAllPoint < 1000) {
+            if (this._keyCount / logAllPoint < 200) {
                 // 怠惰な効率主義者 タイプ数/log10(ALLポイント) < 1000
 				if (this._titles.indexOf("Efficient-Lazy") < 0) {
 					this._titles += ", Efficient-Lazy";
 				}
 
             }
-            if (this._time / logAllPoint < 30) {
+            if (this._time / logAllPoint < 50) {
                 // 勤勉な効率主義者 時間/log10(ALLポイント) < 30
                 if (this._titles.indexOf("Efficient-Diligence") < 0) {
 					this._titles += ", Efficient-Diligence";
