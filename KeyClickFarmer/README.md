@@ -28,6 +28,7 @@ Energy is consumed 1 in every second, recovering by 10 for one key-typing.
 
 ### version 1.0.5
 - added the function of Counting Elapsed Time
+- added the message on achievements
 - fixed typo
 
 ## Contact
