@@ -82,17 +82,22 @@ class WordCounter {
 
     private unit(before : boolean = false) : string{
         // 現在の単位を計算する
-        let U_str = "";
+        let E_str = "";
+        let X_str = "";
         for (let i = (before ? 1 : 0); i < this._unit; i += 1) {
-            U_str += "U";
+            E_str += "E";
+            if ((i + 1) % 5 == 0) {
+                X_str += "X";
+                E_str = "";
+            }
         }
-        return U_str + "pt";
+        return E_str + X_str + "pt";
     }
     
     private makeMessage() : string{
         // 称号の作成
         let baseTitle = "";
-        let logAllPoint = Math.log10(this._allpt) + 36 * this._unit;
+        let logAllPoint = Math.log10(this._allpt) + 18 * this._unit;
 
         // 評定称号
         if (this._power < 7 && this._unit == 0) {
@@ -128,22 +133,22 @@ class WordCounter {
         if (this._unit > 0) {
             if (this._keyCount / logAllPoint < 1000) {
                 // 怠惰な効率主義者 タイプ数/log10(ALLポイント) < 1000
-                if (this._titles.indexOf("Efficient Lazy") < 0)			this._titles += ", Efficient-Lazy";
+                if (this._titles.indexOf("Efficient-Lazy") < 0)			this._titles += ", Efficient-Lazy";
 
             }
             if (this._time / logAllPoint < 30) {
                 // 勤勉な効率主義者 時間/log10(ALLポイント) < 30
-                if (this._titles.indexOf("Efficient Diligence") < 0)	this._titles += ", Efficient-Diligence";
+                if (this._titles.indexOf("Efficient-Diligence") < 0)	this._titles += ", Efficient-Diligence";
             }
         }
         if (this._keyCount > 2000000) {
             // 努力賞 タイプ数200万以上
-            if (this._titles.indexOf("Effort Award") < 0)	this._titles += ", Effort-Award";
+            if (this._titles.indexOf("Effort-Award") < 0)	this._titles += ", Effort-Award";
 
         }
         if (this._time > 900 * 3600) {
             // 皆勤賞 起動時間900時間以上
-            if (this._titles.indexOf("Attendance Award") < 0)	this._titles += ", Attendance-Award";
+            if (this._titles.indexOf("Attendance-Award") < 0)	this._titles += ", Attendance-Award";
         }
         
         return " Your Title" + (this._titles === "" ? " " : "s") + " : " + baseTitle + this._titles;
@@ -198,23 +203,19 @@ class WordCounter {
     public addPower(){
         // PowerUPボタンを押したとき
         let pt    = this._pt;
-        let u     = this._unit;
         let cost  = 100;
         let digit = 0;
         let power = 0.01;
-        let dUP   = Math.min(u, 6);
-        let powUP = u > 6 ? (10 + 10 * Math.pow(0.9, u - 6)) : 20;
+        let powUP = 10 + 5 * Math.pow(0.85, this._unit);
 
         // 倍率計算
         while (pt >= 1000) {
             pt = Math.floor(pt / 10);
             cost *= 10;
             digit += 1;
-            if (digit < 6 && (digit % (1 + dUP) === 0)) {
+            if (digit < 6 && digit % 1 === 0) {
                 power *= powUP;
-            } else if (digit < 16 && (digit % (2 + dUP) === 0)) {
-                power *= powUP;
-            } else if (digit < 36 && (digit % (4 + dUP) === 0)) {
+            } else if (digit < 15 && digit % 2 === 0) {
                 power *= powUP;
             } else {
                 power *= 10;
@@ -228,14 +229,14 @@ class WordCounter {
             let mes1 = `>> Power up!\n`;
             let mes2 = ` Cost : -${this.addComma(cost)} ${this.unit()}\n`;
             let mes3 = `  -> Power : +${this.addComma(power)} ${this.unit()}/type\n`;
-            if (digit >= 36) {
-                // ptの単位系を 10^36 する
+            if (digit >= 18) {
+                // ptの単位系を 10^18 する
                 this._unit += 1;
-                this._power /= Math.pow(10, 36);
-                this._pt /= Math.pow(10, 36);
-                this._allpt /= Math.pow(10, 36);
+                this._power /= Math.pow(10, 18);
+                this._pt /= Math.pow(10, 18);
+                this._allpt /= Math.pow(10, 18);
                 let mes4 = `\n`;
-                let mes5 = `>> Unit changed. 'U' means 10^36.\n`;
+                let mes5 = `>> Unit changed. 'E' means 10^18. ${this._unit >= 10 ? "'X' means 10^90." : ""}\n`;
                 let mes6 = ` ${this.unit(true)} -> ${this.unit()}\n`;
                 window.showInformationMessage("Exchange success. Your points have exceeded ultimate dimension!");
                 this._overview.clear();
@@ -336,3 +337,4 @@ class WordCounterController {
         this._wordCounter.updateWordCount();
     }
 }
+
