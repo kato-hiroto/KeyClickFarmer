@@ -116,24 +116,24 @@ class WordCounter {
             // 真のビギナー 単位が2未満
             baseTitle = "True-Beginner";
 
-        } else if (this._unit < 4) {
-            // 真の熟練者 単位が4未満
+        } else if (this._unit < 5) {
+            // 真の熟練者 単位が5未満
             baseTitle = "True-Expert";
 
-        } else if (this._unit < 7) {
+        } else if (this._unit < 10) {
             // 真のプロ 単位が7未満
             baseTitle = "True-Professional";
 
         } else {
             // 修羅 単位が7以上
-            baseTitle = "Abyss";
+            baseTitle = "Abyss-Worker";
         }
 
         // 特殊な称号
         if (this._unit > 0) {
             if (this._keyCount / logAllPoint < 1000) {
                 // 怠惰な効率主義者 タイプ数/log10(ALLポイント) < 1000
-                if (this._titles.indexOf("Efficient-Lazy") < 0)			this._titles += ", Efficient-Lazy";
+                if (this._titles.indexOf("Efficient-Lazy") < 0)	this._titles += ", Efficient-Lazy";
 
             }
             if (this._time / logAllPoint < 30) {
@@ -215,7 +215,7 @@ class WordCounter {
             digit += 1;
             if (digit < 6 && digit % 1 === 0) {
                 power *= powUP;
-            } else if (digit < 15 && digit % 2 === 0) {
+            } else if (digit < 18 && digit % 2 === 0) {
                 power *= powUP;
             } else {
                 power *= 10;
@@ -236,7 +236,7 @@ class WordCounter {
                 this._pt /= Math.pow(10, 18);
                 this._allpt /= Math.pow(10, 18);
                 let mes4 = `\n`;
-                let mes5 = `>> Unit changed. 'E' means 10^18. ${this._unit >= 10 ? "'X' means 10^90." : ""}\n`;
+                let mes5 = `>> Unit changed. 'E' means 10^18. ${this._unit >= 5 ? "'X' means 10^90." : ""}\n`;
                 let mes6 = ` ${this.unit(true)} -> ${this.unit()}\n`;
                 window.showInformationMessage("Exchange success. Your points have exceeded ultimate dimension!");
                 this._overview.clear();
