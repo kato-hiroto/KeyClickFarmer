@@ -1,0 +1,47 @@
+{
+    "name": "keyclick-farmer",
+    "displayName": "KeyClick Farmer",
+    "description": "This is the game of using key-typing counts.",
+    "version": "1.0.4",
+	"publisher": "iyokarof",
+	"icon": "images/icon-large.png",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/kato-hiroto/ShareProduct/tree/master/KeyClickFarmer"
+	},
+    "engines": {
+        "vscode": "^1.28.0"
+    },
+	"categories": [
+		"Themes",
+		"Other"
+	],
+    "activationEvents": [
+        "*"
+    ],
+	"main": "./out/extension",
+	"contributes": {
+        "commands": [{
+            "command": "extension.keyclickfarmer-info",
+            "title": "KeyClickFarmer-Info"
+		},{
+            "command": "extension.keyclickfarmer-powerup",
+            "title": "KeyClickFarmer-PowerUp"
+        }]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.21",
+        "tslint": "^5.8.0",
+        "@types/node": "^8.10.25",
+        "@types/mocha": "^2.2.42"
+    }
+}
