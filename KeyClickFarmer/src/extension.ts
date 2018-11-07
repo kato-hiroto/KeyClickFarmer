@@ -86,7 +86,7 @@ class WordCounter {
         let X_str = "";
         for (let i = (before ? 1 : 0); i < this._unit; i += 1) {
             E_str += "E";
-            if ((i + 1) % 5 == 0) {
+            if ((i + 1) % 5 === 0) {
                 X_str += "X";
                 E_str = "";
             }
@@ -100,15 +100,15 @@ class WordCounter {
         let logAllPoint = Math.log10(this._allpt) + 18 * this._unit;
 
         // 評定称号
-        if (this._power < 7 && this._unit == 0) {
+        if (this._power < 7 && this._unit === 0) {
             // ビギナー パワーが7未満 & 単位が0
             baseTitle = "Beginner";
         
-        } else if (this._power < 30000000000 && this._unit == 0) {
+        } else if (this._power < 30000000000 && this._unit === 0) {
             // 熟練者 パワーが300億未満 & 単位が0
             baseTitle = "Expert";
         
-        } else if (this._unit == 0) {
+        } else if (this._unit === 0) {
             // プロ 単位が0
             baseTitle = "Professional";
 
@@ -133,22 +133,29 @@ class WordCounter {
         if (this._unit > 0) {
             if (this._keyCount / logAllPoint < 1000) {
                 // 怠惰な効率主義者 タイプ数/log10(ALLポイント) < 1000
-                if (this._titles.indexOf("Efficient-Lazy") < 0)	this._titles += ", Efficient-Lazy";
+				if (this._titles.indexOf("Efficient-Lazy") < 0) {
+					this._titles += ", Efficient-Lazy";
+				}
 
             }
             if (this._time / logAllPoint < 30) {
                 // 勤勉な効率主義者 時間/log10(ALLポイント) < 30
-                if (this._titles.indexOf("Efficient-Diligence") < 0)	this._titles += ", Efficient-Diligence";
+                if (this._titles.indexOf("Efficient-Diligence") < 0) {
+					this._titles += ", Efficient-Diligence";
+				}
             }
         }
         if (this._keyCount > 2000000) {
             // 努力賞 タイプ数200万以上
-            if (this._titles.indexOf("Effort-Award") < 0)	this._titles += ", Effort-Award";
-
+            if (this._titles.indexOf("Effort-Award") < 0) {
+				this._titles += ", Effort-Award";
+			}
         }
         if (this._time > 900 * 3600) {
             // 皆勤賞 起動時間900時間以上
-            if (this._titles.indexOf("Attendance-Award") < 0)	this._titles += ", Attendance-Award";
+            if (this._titles.indexOf("Attendance-Award") < 0) {
+				this._titles += ", Attendance-Award";
+			}
         }
         
         return " Your Title" + (this._titles === "" ? " " : "s") + " : " + baseTitle + this._titles;
