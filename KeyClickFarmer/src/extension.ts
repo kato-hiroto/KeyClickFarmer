@@ -187,6 +187,7 @@ class WordCounter {
             this._energy -= 1;
         }
         this._time += 1;
+        this.save();
         this.showStatus();
     }
 
@@ -213,7 +214,7 @@ class WordCounter {
         let cost  = 100;
         let digit = 0;
         let power = 0.01;
-        let powUP = this._unit > 0 ? 10 + 5 * Math.pow(0.85, this._unit - 1) : 20;
+        let powUP = this._unit > 0 ? 10 + 7 * Math.pow(0.85, this._unit - 1) : 20;
 
         // 倍率計算
         while (pt >= 1000) {
@@ -311,7 +312,6 @@ class WordCounter {
         this._statusBarInfo.text = `$(info)`;
         this._statusBarInfo.command = "extension.keyclickfarmer-info";
         this._statusBarInfo.show();
-        this.save();
     }
 
     dispose() {
