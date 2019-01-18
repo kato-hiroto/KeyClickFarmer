@@ -276,8 +276,10 @@ class WordCounter {
             Unit:     this._unit,
             Titles:   this._titles
         };
-        let json = JSON.stringify(obj);
-        fs.writeFile(path.resolve(__dirname, '../../keyclickfarmer-savedata.json'), json, 'utf8', (err : Error) => {
+		let json = JSON.stringify(obj);
+		let filename = '../../keyclickfarmer-savedata'+ (this._time % 2 === 0 ? '' : '-odd') +'.json';
+
+        fs.writeFile(path.resolve(__dirname, filename), json, 'utf8', (err : Error) => {
             if (err) {
                 window.showErrorMessage(err.message);
                 console.log(err);
@@ -286,21 +288,55 @@ class WordCounter {
     }
 
     public load() {
+		let config;
+		let config_main;
+		let config_odd;
+		let loading_code : number = 0;
+
+		// 従来ファイルの読み込み
         try {
-            let config = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../keyclickfarmer-savedata.json'), 'utf8'));
-            if (config.keyCount !== undefined) this._keyCount = config.keyCount;
-            if (config.time     !== undefined) this._time     = config.time;
-            if (config.Point    !== undefined) this._pt       = config.Point;
-            if (config.allPoint !== undefined) this._allpt    = config.allPoint;
-            if (config.Power    !== undefined) this._power    = config.Power;
-            if (config.Energy   !== undefined) this._energy   = config.Energy;
-            if (config.Unit     !== undefined) this._unit     = config.Unit;
-            if (config.Titles   !== undefined) this._titles   = config.Titles;
+            config_main = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../keyclickfarmer-savedata.json'), 'utf8'));
         } catch (e){
             console.log(e);
-            console.log(">> Make savedata.\n");
-            this.save();
-        }
+            console.log(">> No savedata.\n");
+			loading_code += 1;
+		}
+
+		// 第二ファイルの読み込み
+        try {
+            config_odd = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../../keyclickfarmer-savedata-odd.json'), 'utf8'));
+        } catch (e){
+            console.log(e);
+			console.log(">> No odd-data.\n");
+			loading_code += 2;
+		}
+
+		// ファイルの存在による分岐
+		switch (loading_code) {
+			case 3:
+				return;
+			case 2:
+				config = config_main;
+				break;
+			case 1:
+				config = config_odd;
+				break;
+			case 0:
+				let maintime : number = (config_main.time !== undefined ? config_main.time : -1);
+				let oddtime  : number = (config_odd.time  !== undefined ? config_odd.time  : -1);
+				config = maintime > oddtime ? config_main : config_odd;
+				break;
+		}
+		
+		// データ読み込み
+		this._keyCount = config.keyCount;
+		this._time     = config.time;
+		this._pt       = config.Point;
+		this._allpt    = config.allPoint;
+		this._power    = config.Power;
+		this._energy   = config.Energy;
+		this._unit     = config.Unit;
+		this._titles   = config.Titles;
         this.showStatus();
     }
 
