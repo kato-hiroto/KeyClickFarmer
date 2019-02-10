@@ -52,6 +52,123 @@ class AutoTimer {
     }
 }
 
+// 整数部32桁，小数部8桁の正の数まで正しく扱える数値型
+class Decimal {
+
+	private _strValue: string = "0";
+	private _intValue: number[] = new Array(5);
+
+	constructor(val : string) {
+		// コンストラクタ
+		this.setValue(val);
+	}
+
+	public getValue() : string {
+		// 値を出力する
+		this._strValue = this.parseStr(this._intValue);
+		return this._strValue;
+	}
+
+	public setValue(val : string) : string {
+		// 値を代入する
+		this._strValue = val;
+		this.parseInt(this._strValue, this._intValue);
+		return val;
+	}
+
+	private parseInt(strVal : string, intVal : number[]) {
+		// 文字列を数値に置き換える
+		let val = strVal;
+		let dotPos : number = val.indexOf(".");
+		// 小数部
+		let tmpStr = val.substring(dotPos + 1);
+		if (tmpStr.length === 0 || dotPos < 0) {	// 文字列がない，小数点がないなら0を代入
+			intVal[0] = 0;
+		} else if (tmpStr.length <= 8) {			// 8文字以下なら8桁になるよう0埋め
+			intVal[0] = parseInt(tmpStr) * Math.pow(10, 8 - tmpStr.length);
+		} else {									// 8文字を超えるなら超えた部分はカット
+			intVal[0] = parseInt(tmpStr.substring(0, 8));
+		}
+		// 整数部
+		for (let i = 1; i < 5; i++) {
+			let startPos = Math.max(val.length - 8 * (i + 1) - dotPos, 0);
+			let endPos = Math.max(val.length - 8 * i - dotPos, 0);
+			let tmpStr = val.substring(startPos, endPos);
+			intVal[i] = tmpStr === "" ? 0 : parseInt(tmpStr);
+		}
+	}
+
+	private parseStr(intVal : number[]) : string {
+		// 数値を文字列に置き換える
+		let strVal = "";
+		// 整数部
+		for (let i = 4; i > 0; i--) {
+			let tmp = intVal[i];
+			strVal += tmp === 0 ? "" : tmp.toString();
+		}
+		// 小数部
+		let tmp = intVal[0];
+		strVal += tmp === 0 ? "." : "." + tmp.toString();
+		return strVal;
+	}
+
+	private Carry(index : number) {
+		// 指定した_intValueについて桁上がりがあれば実行
+		let dig = 100000000;
+		let val = this._intValue[index];
+		let small = val % dig >= 0 ? val % dig + 0 : val % dig + dig;
+		let big = (val - small) / dig;
+		if (index + 1 < 5) {
+			this._intValue[index + 1] += big;
+		}
+		this._intValue[index] = small;
+	}
+
+	private Borrow(index : number) {
+		// 指定した_intValueについて小数点以下の値があれば実行
+		let dig = 100000000;
+		let val = this._intValue[index];
+		let big = Math.floor(val);
+		let small = (val - big) * dig;
+		if (index - 1 >= 0) {
+			this._intValue[index - 1] += small;
+		}
+		this._intValue[index] = big;
+	}
+
+	public add(other : string){
+		// 加算
+		let tmpInt : number[] = new Array(5);
+		this.parseInt(other, tmpInt);
+		for (let i = 0; i < 5; i++) {
+			this._intValue[i] += tmpInt[i];
+			this.Carry(i);
+		}
+	}
+
+	public sub(other : string){
+		// 減算
+		let tmpInt : number[] = new Array(5);
+		this.parseInt(other, tmpInt);
+		for (let i = 0; i < 5; i++) {
+			this._intValue[i] -= tmpInt[i];
+			this.Carry(i);
+		}
+	}
+
+	public mul(other : number){
+		// 数値との乗算(逆数を入れれば除算)
+		for (let i = 0; i < 5; i++) {
+			this._intValue[i] *= other;
+		}
+		for (let i = 4; i >= 0; i--) {
+			this.Borrow(i);
+		}		
+		for (let i = 0; i < 5; i++) {
+			this.Carry(i);
+		}
+	}
+}
 
 // タイプ数のカウントなど
 class WordCounter {
