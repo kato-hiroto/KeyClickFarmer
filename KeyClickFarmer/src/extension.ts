@@ -114,14 +114,15 @@ class Decimal {
 
 	private Carry(index : number) {
 		// 指定した_intValueについて桁上がりがあれば実行
+		// 問題点：負の値を入れるとおかしくなる（例：-1 -> 99999999 99999999 99999999 99999999）
 		let dig = 100000000;
 		let val = this._intValue[index];
 		let small = val % dig >= 0 ? val % dig + 0 : val % dig + dig;
 		let big = (val - small) / dig;
 		if (index + 1 < 5) {
 			this._intValue[index + 1] += big;
-			this._intValue[index] = small;
 		}
+		this._intValue[index] = small;
 	}
 
 	private Borrow(index : number) {
