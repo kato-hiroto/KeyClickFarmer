@@ -120,8 +120,8 @@ class Decimal {
 		let big = (val - small) / dig;
 		if (index + 1 < 5) {
 			this._intValue[index + 1] += big;
+			this._intValue[index] = small;
 		}
-		this._intValue[index] = small;
 	}
 
 	private Borrow(index : number) {
