@@ -1,7 +1,12 @@
 'use strict';
+
+
+
 import {Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, OutputChannel} from 'vscode';
 var fs = require('fs');
 var path = require('path');
+
+
 
 // エディタ起動時（アクティベート時）の処理
 export function activate(context: ExtensionContext) {
