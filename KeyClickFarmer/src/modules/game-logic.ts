@@ -4,11 +4,11 @@ import Data from "./data";
 
 export default class GameLogic {
 
-    static readonly UNIT = 18;
+    public static readonly UNIT = 18;
     private _lastUseCost = new Decimal("0");
     private _lastAddPower = new Decimal("0");
     private _lastPointBeforePowerUp = new Decimal("0");
-    private _lastUnitBeforePowerUp = new Decimal("0");
+    private _lastUnitBeforePowerUp = 0;
     private _lastAddTitle: string = "";
 
     constructor(private _data: Data) {
@@ -26,7 +26,7 @@ export default class GameLogic {
         return this._lastAddPower;
     }
 
-    get lastUnitBeforePowerUp(): Decimal {
+    get lastUnitBeforePowerUp(): number {
         return this._lastUnitBeforePowerUp;
     }
 
@@ -36,12 +36,12 @@ export default class GameLogic {
     
     public doEverySecond(): boolean {
         // 自動ポイント加算
-        if (this._data.energy.isBiggerThan(0)) {
+        if (this._data.energy > 0) {
             this._data.addPt(this._data.power);
-            this._data.energy.sub(1, true);
+            this._data.energy -= 1;
             return true;
         }
-        this._data.time.add(1, true);
+        this._data.time += 1;
         this._data.save();
         return false;
     }
@@ -50,9 +50,9 @@ export default class GameLogic {
         // キータイプしたとき
         this._data.keyCount.add(1, true);
         this._data.addPt(this._data.power);
-        this._data.energy.add(10, true);
-        if (this._data.energy.isBiggerThan(this._data.energy_max)) {
-            this._data.energy.setValue(this._data.energy_max);
+        this._data.energy += 10;
+        if (this._data.energy > this._data.energy_max) {
+            this._data.energy = this._data.energy_max;
         }
     }
 
@@ -62,19 +62,19 @@ export default class GameLogic {
         let cost  = new Decimal(100);
         let digit = 0;
         let power = new Decimal(0.01);
-        let powerUpRate = this._data.unit.isBiggerThan(0) ? 10 + 7 * Math.pow(0.85, this._data.unit.sub(1).toInteger()) : 20;
+        let powerUpRate = this._data.unit > 0 ? 10 + 7 * Math.pow(0.85, this._data.unit - 1) : 20;
 
         // PowerUp量を計算
         while (pt.isBiggerThan(1000, true)) {
             pt.mul(0.1, true);
-            cost *= 10;
+            cost.mul(10, true);
             digit += 1;
             if (digit <= 6) {
-                power *= powerUpRate;
+                power.mul(powerUpRate, true);
             } else if (digit <= GameLogic.UNIT && digit % 2 === 0) {
-                power *= powerUpRate;
+                power.mul(powerUpRate, true);
             } else {
-                power *= 10;
+                power.mul(10, true);
             }
         }
 
@@ -90,7 +90,7 @@ export default class GameLogic {
             this._data.power.add(power, true);
             if (digit >= GameLogic.UNIT) {
                 // ptの単位系を 10^UNIT する
-                this._data.unit.add(1, true);
+                this._data.unit += 1;
                 this._data.power.divByPow10(GameLogic.UNIT, true);
                 this._data.pt.divByPow10(GameLogic.UNIT, true);
                 this._data.allpt.divByPow10(GameLogic.UNIT, true);
@@ -108,11 +108,11 @@ export default class GameLogic {
         let superTitle = "";
 
         // 評定称号
-        if (this._data.power < 7 && baseUnit === 0) {
+        if (!this._data.power.isBiggerThan(7, true) && baseUnit === 0) {
             // ビギナー パワーが7未満 & 単位が0
             baseTitle = "Beginner";
         
-        } else if (this._data.power < 30000000000 && baseUnit === 0) {
+        } else if (!this._data.power.isBiggerThan(30000000000, true) && baseUnit === 0) {
             // 熟練者 パワーが300億未満 & 単位が0
             baseTitle = "Expert";
         

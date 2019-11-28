@@ -17,12 +17,12 @@ type InputType = {
 
 type DataType = {
     keyCount: Decimal;
-    time: Decimal;
+    time: number;
     pt: Decimal;
     allpt: Decimal;
     power: Decimal;
-    energy: Decimal;
-    unit: Decimal;
+    energy: number;
+    unit: number;
     titles: string;
 };
 
@@ -32,23 +32,23 @@ export default class Data implements DataType {
     public readonly energy_max = 10800;
 
     public keyCount: Decimal = new Decimal("0");
-    public time: Decimal = new Decimal("0");
+    public time: number = 0;
     public pt: Decimal = new Decimal("0");
     public allpt: Decimal = new Decimal("0");
     public power: Decimal = new Decimal("1");
-    public unit: Decimal = new Decimal("0");
-    public energy: Decimal = new Decimal(this.energy_max);
+    public unit: number = 0;
+    public energy: number = this.energy_max;
     public titles: string = "";
     
-    public static addComma(value: Decimal, fix: boolean = true) : string{
+    public static addComma(value: number | Decimal, fix: boolean = true) : string{
         // 数値にコンマをつけて表示
         return String(fix ? value.toString(2) : value.toString()).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
     }
 
-    public static unitString(value: Decimal, before : boolean = false) : string{
+    public static unitString(value: number) : string{
         // 現在の単位を文字列で表示
-        let E_str = "E".repeat(value.mod(5));
-        let X_str = "X".repeat(Math.floor(value.toInteger() / 5));
+        let E_str = "E".repeat(value % 5);
+        let X_str = "X".repeat(Math.floor(value / 5));
         return E_str + X_str + "pt";
     }
 
@@ -71,7 +71,7 @@ export default class Data implements DataType {
             Titles:   this.titles
         };
 		const json = JSON.stringify(obj);
-		const filename = "../../keyclickfarmer-savedata"+ (this.time.mod(2) === 0 ? "" : "-odd") +".json";
+		const filename = "../../keyclickfarmer-savedata"+ (this.time % 2 === 0 ? "" : "-odd") +".json";
 
         fs.writeFile(path.resolve(__dirname, filename), json, "utf8", (err : Error) => {
             if (err) {
@@ -125,12 +125,12 @@ export default class Data implements DataType {
 		
 		// データ読み込み
 		this.keyCount = new Decimal(config.keyCount);
-		this.time     = new Decimal(config.time);
+		this.time     = Number(config.time);
 		this.pt       = new Decimal(config.Point);
 		this.allpt    = new Decimal(config.allPoint);
 		this.power    = new Decimal(config.Power);
-		this.energy   = new Decimal(config.Energy);
-		this.unit     = new Decimal(config.Unit);
+		this.energy   = Number(config.Energy);
+		this.unit     = Number(config.Unit);
 		this.titles   = config.Titles;
     }
 }
