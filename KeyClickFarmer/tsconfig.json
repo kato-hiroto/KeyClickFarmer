@@ -19,5 +19,9 @@
     "exclude": [
         "node_modules",
         ".vscode-test"
+    ],
+    "files": [
+      "src/modules/decimal.ts",
+      "src/test/decimal.test.ts"
     ]
 }
