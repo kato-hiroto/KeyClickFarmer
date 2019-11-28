@@ -24,7 +24,7 @@ export default class GameUI{
 
     public showMessage(): void {
         this._overview.clear();
-        this._overview.append(this.showInfo() + this.showPower());
+        this._overview.append(this.showPower() + this.showInfo());
         this._overview.show(true);
     }
 

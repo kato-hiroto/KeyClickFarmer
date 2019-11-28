@@ -149,7 +149,7 @@ export default class Decimal {
         this.parseStr();
         const dotPos = this._strValue.indexOf(".");
         const intStr = this._strValue.substring(0, dotPos > -1 ? dotPos : undefined);
-        const decStr = dotPos > -1 ? this._strValue.substr(dotPos, dotPos + decimalLength + 1) : "";
+        const decStr = dotPos > -1 ? this._strValue.substring(dotPos, dotPos + decimalLength + 1) : "";
         return intStr + decStr;
     }
 

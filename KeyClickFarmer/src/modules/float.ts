@@ -1,5 +1,3 @@
-import Decimal from "./decimal";
-
 enum Mode {
     Input,
     Add,
@@ -12,6 +10,7 @@ enum Mode {
 export default class Float {
 
     static readonly DIGIT = 8;
+    static readonly MAX_CELLCOUNT = 10;
 
     private _strValue: string = "0";
     private _intValues: Array<number> = new Array();
@@ -62,10 +61,14 @@ export default class Float {
             case Mode.RShift: result = now / Math.pow(10, Math.floor(value)); break;
         }
         if (index >= this._intValues.length) {
-            this._intValues.push(result);
-            this._dotPos += Float.DIGIT;
+            if (this._intValues.length < Float.MAX_CELLCOUNT) {
+                this._intValues.push(result);
+                this._dotPos += Float.DIGIT;
+            }
         } else if (index < 0) {
-            this._intValues.unshift(result);
+            if (this._intValues.length < Float.MAX_CELLCOUNT) {
+                this._intValues.unshift(result);
+            }
         } else {
             this._intValues[index] = result;
         }
@@ -75,12 +78,25 @@ export default class Float {
         const nowValue = this.getIntValue(index);
         const dig10 = Math.pow(10, Float.DIGIT);
 
+        if (index === 0) {
+            // 最下位桁の処理
+            if (nowValue === 0 && this._strValue.length - this._dotPos >= Float.DIGIT) {
+                this._intValues.shift();
+            }
+        }
         if (index === this._intValues.length - 1) {
             // 最上位桁の処理
             if (nowValue === -1) {
                 return;
             } else if (nowValue === 0) {
                 this._intValues.pop();
+                this._dotPos -= Float.DIGIT;
+                return;
+            }
+        }
+        if (index === this._intValues.length - 1) {
+            // 最上位桁の処理
+            if (nowValue === -1) {
                 return;
             }
         }
@@ -118,27 +134,30 @@ export default class Float {
         // 下からDIGIT桁ごとに配列へ入れる
         let counter = 0;
         while (val !== "") {
-            const part = val.substring(Math.max(0, val.length - Float.DIGIT));
+            const part = val.substring(Math.max(0, val.length - Float.DIGIT - 1));
             this.setIntValue(counter, Number(part));
-            val = val.substring(0, Math.max(0, val.length - Float.DIGIT));
+            val = val.substring(0, Math.max(0, val.length - Float.DIGIT - 1));
             counter++;
         }
+        // 値の修正
+        this.fixIntValues();
         return this._intValues;
     }
 
     public parseString(): string {
         // 数字を全部結合
         let val = "";
-        for (let i in this._intValues) {
+        for (let i of this._intValues) {
             const str = i.toString();
-            val = "0".repeat(Decimal.DIGIT - str.length) + i.toString() + val;
+            val = "0".repeat(Float.DIGIT - str.length) + i.toString() + val;
         }
         // +記号を挿入
         if (this.isMinus) {
             val = val.substring(0, 2) + "*10^" + (this.dotPos - 1) + "+" + val.substring(2);
         }
-        // 小数点を挿入
+        // 小数点を挿入，末尾の0を除去
         val = val.substring(0, this._dotPos) + "." + val.substring(this._dotPos);
+        val = val.replace(/0+$/, "");
         this._strValue = val;
         return this._strValue;
     }
