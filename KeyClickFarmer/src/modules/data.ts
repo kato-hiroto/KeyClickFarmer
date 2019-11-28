@@ -1,65 +1,77 @@
 "use strict";
-import {window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, OutputChannel} from "vscode";
+import {window} from "vscode";
+import Decimal from "./decimal";
 var fs = require("fs");
 var path = require("path");
 
-type ConfigType = {
-    keyCount?: number;
-    time?: number;
-    Point?: number;
-    allPoint?: number;
-    Power?: number;
-    Energy?: number;
-    Unit?: number;
+type InputType = {
+    keyCount?: string;
+    time?: string;
+    Point?: string;
+    allPoint?: string;
+    Power?: string;
+    Energy?: string;
+    Unit?: string;
     Titles?: string;
 };
 
+type DataType = {
+    keyCount: Decimal;
+    time: Decimal;
+    pt: Decimal;
+    allpt: Decimal;
+    power: Decimal;
+    energy: Decimal;
+    unit: Decimal;
+    titles: string;
+};
+
 // ゲームデータ
-export default class Data implements ConfigType {
+export default class Data implements DataType {
 
     public readonly energy_max = 10800;
 
-    public keyCount: number = 0;
-    public time: number = 0;
-    public pt: number = 0;
-    public allpt: number = 0;
-    public power: number = 1;
-    public unit: number = 0;
-    public energy: number = this.energy_max;
+    public keyCount: Decimal = new Decimal("0");
+    public time: Decimal = new Decimal("0");
+    public pt: Decimal = new Decimal("0");
+    public allpt: Decimal = new Decimal("0");
+    public power: Decimal = new Decimal("1");
+    public unit: Decimal = new Decimal("0");
+    public energy: Decimal = new Decimal(this.energy_max);
     public titles: string = "";
     
-    public static addComma(value: number, fix: boolean = true) : string{
+    public static addComma(value: Decimal, fix: boolean = true) : string{
         // 数値にコンマをつけて表示
-        return String(fix ? value.toFixed(2) : value).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        return String(fix ? value.toString(2) : value.toString()).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
     }
 
-    public static unitString(value: number, before : boolean = false) : string{
+    public static unitString(value: Decimal, before : boolean = false) : string{
         // 現在の単位を文字列で表示
-        let E_str = "E".repeat(value % 5);
-        let X_str = "X".repeat(Math.floor(value / 5));
+        let E_str = "E".repeat(value.mod(5));
+        let X_str = "X".repeat(Math.floor(value.toInteger() / 5));
         return E_str + X_str + "pt";
     }
 
-    public addPt(pt: number) {
+    public addPt(pt: Decimal) {
         // ポイント加算を効率よくやる
-        this.pt += pt;
-        this.allpt += pt;
+        this.pt.add(pt, true);
+        this.allpt.add(pt, true);
     }
 
     public save() {
         // ファイル保存
-        const obj = {
-            keyCount: this.keyCount,
-            time:     this.time,
-            Point:    this.pt,
-            allPoint: this.allpt,
-            Power:    this.power,
-            Energy:   this.energy,
-            Unit:     this.unit,
+        const obj: InputType = {
+            keyCount: this.keyCount.toString(),
+            time:     this.time.toString(),
+            Point:    this.pt.toString(),
+            allPoint: this.allpt.toString(),
+            Power:    this.power.toString(),
+            Energy:   this.energy.toString(),
+            Unit:     this.unit.toString(),
             Titles:   this.titles
         };
 		const json = JSON.stringify(obj);
-		const filename = "../../keyclickfarmer-savedata"+ (this.time % 2 === 0 ? "" : "-odd") +".json";
+		const filename = "../../keyclickfarmer-savedata"+ (this.time.mod(2) === 0 ? "" : "-odd") +".json";
 
         fs.writeFile(path.resolve(__dirname, filename), json, "utf8", (err : Error) => {
             if (err) {
@@ -71,9 +83,9 @@ export default class Data implements ConfigType {
 
     public load() {
         // ファイル読み込み
-		let config: ConfigType;
-		let config_main: ConfigType;
-		let config_odd: ConfigType;
+		let config: InputType;
+		let config_main: InputType;
+		let config_odd: InputType;
 		let loading_code : number = 0;
 
 		// メインファイルの読み込み
@@ -105,20 +117,20 @@ export default class Data implements ConfigType {
 				config = config_odd;
 				break;
 			case 0:
-				const maintime : number = (config_main.time !== undefined ? config_main.time : -1);
-				const oddtime  : number = (config_odd.time  !== undefined ? config_odd.time  : -1);
-				config = maintime > oddtime ? config_main : config_odd;
+				const maintime : Decimal = (config_main.time !== undefined ? new Decimal(config_main.time) : new Decimal("0"));
+				const oddtime  : Decimal = (config_odd.time  !== undefined ? new Decimal(config_odd.time)  : new Decimal("0"));
+				config = maintime.isBiggerThan(oddtime) ? config_main : config_odd;
 				break;
 		}
 		
 		// データ読み込み
-		this.keyCount = config.keyCount;
-		this.time     = config.time;
-		this.pt       = config.Point;
-		this.allpt    = config.allPoint;
-		this.power    = config.Power;
-		this.energy   = config.Energy;
-		this.unit     = config.Unit;
+		this.keyCount = new Decimal(config.keyCount);
+		this.time     = new Decimal(config.time);
+		this.pt       = new Decimal(config.Point);
+		this.allpt    = new Decimal(config.allPoint);
+		this.power    = new Decimal(config.Power);
+		this.energy   = new Decimal(config.Energy);
+		this.unit     = new Decimal(config.Unit);
 		this.titles   = config.Titles;
     }
 }

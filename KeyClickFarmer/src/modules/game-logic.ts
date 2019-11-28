@@ -4,28 +4,29 @@ import Data from "./data";
 
 export default class GameLogic {
 
-    private _lastUseCost: number = 0;
-    private _lastAddPower: number = 0;
-    private _lastPointBeforePowerUp: number = 0;
-    private _lastUnitBeforePowerUp: number = 0;
+    static readonly UNIT = 18;
+    private _lastUseCost = new Decimal("0");
+    private _lastAddPower = new Decimal("0");
+    private _lastPointBeforePowerUp = new Decimal("0");
+    private _lastUnitBeforePowerUp = new Decimal("0");
     private _lastAddTitle: string = "";
 
     constructor(private _data: Data) {
     }
 
-    get lastPoint(): number {
+    get lastPoint(): Decimal {
         return this._lastPointBeforePowerUp;
     }
     
-    get lastUseCost(): number {
+    get lastUseCost(): Decimal {
         return this._lastUseCost;
     }
 
-    get lastAddPower(): number {
+    get lastAddPower(): Decimal {
         return this._lastAddPower;
     }
 
-    get lastUnitBeforePowerUp(): number {
+    get lastUnitBeforePowerUp(): Decimal {
         return this._lastUnitBeforePowerUp;
     }
 
@@ -35,42 +36,42 @@ export default class GameLogic {
     
     public doEverySecond(): boolean {
         // 自動ポイント加算
-        if (this._data.energy > 0) {
+        if (this._data.energy.isBiggerThan(0)) {
             this._data.addPt(this._data.power);
-            this._data.energy -= 1;
+            this._data.energy.sub(1, true);
             return true;
         }
-        this._data.time += 1;
+        this._data.time.add(1, true);
         this._data.save();
         return false;
     }
     
     public doKeyClick() {
         // キータイプしたとき
-        this._data.keyCount += 1;
+        this._data.keyCount.add(1, true);
         this._data.addPt(this._data.power);
-        this._data.energy += 10;
-        if (this._data.energy > this._data.energy_max) {
-            this._data.energy = this._data.energy_max;
+        this._data.energy.add(10, true);
+        if (this._data.energy.isBiggerThan(this._data.energy_max)) {
+            this._data.energy.setValue(this._data.energy_max);
         }
     }
 
     public doPushButton(): boolean {
         // PowerUpボタンを押したとき
-        let pt    = this._data.pt;
-        let cost  = 100;
+        let pt    = new Decimal(this._data.pt);
+        let cost  = new Decimal(100);
         let digit = 0;
-        let power = 0.01;
-        let powerUpRate = this._data.unit > 0 ? 10 + 7 * Math.pow(0.85, this._data.unit - 1) : 20;
+        let power = new Decimal(0.01);
+        let powerUpRate = this._data.unit.isBiggerThan(0) ? 10 + 7 * Math.pow(0.85, this._data.unit.sub(1).toInteger()) : 20;
 
         // PowerUp量を計算
-        while (pt >= 1000) {
-            pt = Math.floor(pt / 10);
+        while (pt.isBiggerThan(1000, true)) {
+            pt.mul(0.1, true);
             cost *= 10;
             digit += 1;
             if (digit <= 6) {
                 power *= powerUpRate;
-            } else if (digit <= 18 && digit % 2 === 0) {
+            } else if (digit <= GameLogic.UNIT && digit % 2 === 0) {
                 power *= powerUpRate;
             } else {
                 power *= 10;
@@ -79,20 +80,20 @@ export default class GameLogic {
 
         // 変化量を記録
         this._lastPointBeforePowerUp = this._data.pt;
-        this._lastUseCost = cost;
-        this._lastAddPower = power;
+        this._lastUseCost.setValue(cost);
+        this._lastAddPower.setValue(power);
         this._lastUnitBeforePowerUp = this._data.unit;
 
         // ポイント消費
-        if (this._data.pt >= cost) {
-            this._data.pt -= cost;
-            this._data.power += power;
-            if (digit >= 18) {
-                // ptの単位系を 10^18 する
-                this._data.unit += 1;
-                this._data.power /= Math.pow(10, 18);
-                this._data.pt /= Math.pow(10, 18);
-                this._data.allpt /= Math.pow(10, 18);
+        if (this._data.pt.isBiggerThan(cost, true)) {
+            this._data.pt.sub(cost, true);
+            this._data.power.add(power, true);
+            if (digit >= GameLogic.UNIT) {
+                // ptの単位系を 10^UNIT する
+                this._data.unit.add(1, true);
+                this._data.power.divByPow10(GameLogic.UNIT, true);
+                this._data.pt.divByPow10(GameLogic.UNIT, true);
+                this._data.allpt.divByPow10(GameLogic.UNIT, true);
             }
             return true;
         }

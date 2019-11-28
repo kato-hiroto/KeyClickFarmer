@@ -7,23 +7,20 @@ export default class Decimal {
     private _strValue: string = "0";
     private _intValue: number[] = new Array(Decimal.INT + 1);
 
-    constructor(val : string) {
-        // 値を代入する
-        this._strValue = val;
-        this.parseInt();
+    constructor(val: number | string | Decimal) {
+        this.setValue(val);
+    }
+
+    private static trim(val: number): number {
+        // 上限と下限に揃える
+        const dig = Math.pow(10, Decimal.DIGIT);
+        const max = dig - 1;
+        const min = 0;
+        const tmp = Math.min(max, Math.max(val, min));
+        const ans = Math.floor(tmp * dig) / dig;    // 小数部分をDIGIT桁にする
+        return ans; 
     }
     
-    public toString() : string {
-        // 値を出力する
-        this.parseStr();
-        return this._strValue;
-    }
-
-    public toNumbers(): number[] {
-        // 値を出力する
-        return this._intValue;
-    }
-
     private parseInt(): void {
         const val = this._strValue;
         const dotPos : number = val.indexOf(".");
@@ -116,16 +113,71 @@ export default class Decimal {
         }
         this._intValue[index] = big;
     }
+    
+    /**
+     * @param  {number|string} val
+     */
+    public setValue(val: number | string | Decimal): void {
+        if (typeof val === "number") {
+            // 8桁以下の数値の場合
+            const integer = Math.floor(Decimal.trim(val));
+            for (let i = 4; i >= 0; i--) {
+                if (i === 1) {
+                    this._intValue[i] = integer;
+                } else {
+                    this._intValue[i] = 0;
+                }
+            }
+            this._strValue = integer.toString();
+        } else if (typeof val === "string") {
+            // 文字列の場合
+            this._strValue = val;
+            this.parseInt();
+        } else {
+            // Decimalの場合
+            this._strValue = val.toString();
+            this.parseInt();
+        }
+    }
+    
+    /**
+     * @param  {number|undefined=undefined} decimalLength
+     * @returns string
+     */
+    public toString(decimalLength: number = Decimal.DIGIT) : string {
+        // 値を出力する
+        this.parseStr();
+        const dotPos = this._strValue.indexOf(".");
+        const intStr = this._strValue.substring(0, dotPos > -1 ? dotPos : undefined);
+        const decStr = dotPos > -1 ? this._strValue.substr(dotPos, dotPos + decimalLength + 1) : "";
+        return intStr + decStr;
+    }
 
     /**
-     * @param  {Decimal} effective Decimal
-     * @param  {Boolean=false} destructive
-     * @returns {Decimal}
+     * @returns {number}
      */
-    public add(affector: Decimal, destructive: Boolean = false): Decimal {
+    public toNumbers(): number[] {
+        // 値を出力する
+        return this._intValue;
+    }
+    
+    /**
+     * @returns {number}
+     */
+    public toInteger(): number {
+        // 値を出力する
+        return this._intValue[1];
+    }
+
+    /**
+     * @param  {number|Decimal} affector
+     * @param  {Boolean=false} destructive
+     * @returns Decimal
+     */
+    public add(affector: number | Decimal, destructive: Boolean = false): Decimal {
         if (destructive) {
             // 破壊的加算
-            const b : number[] = affector.toNumbers();
+            const b : number[] = new Decimal(affector).toNumbers();
             for (let i = 0; i <= Decimal.INT; i++) {
                 this._intValue[i] += b[i];
                 this.Carry(i);
@@ -133,20 +185,20 @@ export default class Decimal {
             return this;
         } else {
             // 非破壊的加算
-            const decimal = new Decimal(this.toString());
+            const decimal = new Decimal(this);
             return decimal.add(affector, true);
         }
     }
 
     /**
-     * @param  {Decimal} affector
+     * @param  {number|Decimal} affector
      * @param  {Boolean=false} destructive
-     * @returns {Decimal}
+     * @returns Decimal
      */
-    public sub(affector: Decimal, destructive: Boolean = false): Decimal{
+    public sub(affector: number | Decimal, destructive: Boolean = false): Decimal{
         if (destructive) {
             // 破壊的減算
-            const b : number[] = affector.toNumbers();
+            const b : number[] = new Decimal(affector).toNumbers();
             this.parseInt();
             for (let i = 0; i <= Decimal.INT; i++) {
                 this._intValue[i] -= b[i];
@@ -155,7 +207,7 @@ export default class Decimal {
             return this;
         } else {
             // 非破壊的減算
-            const decimal = new Decimal(this.toString());
+            const decimal = new Decimal(this);
             return decimal.sub(affector, true);
         }
     }
@@ -163,13 +215,14 @@ export default class Decimal {
     /**
      * @param  {number} affector
      * @param  {Boolean=false} destructive
-     * @returns {Decimal}
+     * @returns Decimal
      */
     public mul(affector: number, destructive: Boolean = false): Decimal{
         if (destructive) {
-            // 破壊的 : 数値との乗算（小数点以下がDIGIT桁を超える数は扱えない）
+            // 破壊的 : 数値との乗算（小数点以下がDIGIT桁を超える部分は無視される）
+            const _affector = Decimal.trim(affector);
             for (let i = 0; i <= Decimal.INT; i++) {
-                this._intValue[i] *= affector;
+                this._intValue[i] *= _affector;
             }
             for (let i = Decimal.INT; i >= 0; i--) {
                 this.Borrow(i);
@@ -180,25 +233,70 @@ export default class Decimal {
             return this;
         } else {
             // 非破壊的
-            const decimal = new Decimal(this.toString());
+            const decimal = new Decimal(this);
             return decimal.mul(affector, true);
         }
     }
 
     /**
-     * @param  {Decimal} target
-     * @returns {Decimal}
+     * @param  {number} affector only Integer
+     * @param  {Boolean=false} destructive
+     * @returns Decimal
      */
-    public isSmallerThan(target: Decimal): Boolean {
-        // 引数より小さければtrue
+    public divByPow10(pow10: number, destructive: Boolean = false): Decimal{
+        if (destructive) {
+            // 破壊的 : 10の累乗による割り算
+            const _pow10 = Math.floor(pow10);
+            const moveCells = Math.floor(_pow10 / Decimal.DIGIT);
+            // 桁を落とす
+            for (let i = 0; i <= Decimal.INT; i++) {
+                if (i + moveCells <= Decimal.INT) {
+                    this._intValue[i] = this._intValue[i + moveCells];
+                } else {
+                    this._intValue[i] = 0;
+                }
+            }
+            // 逆数でかけ算
+            this.mul(1 / Math.pow(10, _pow10 % Decimal.DIGIT), true);
+            return this;
+        } else {
+            // 非破壊的
+            const decimal = new Decimal(this);
+            return decimal.mul(pow10, true);
+        }
+    }
+    
+    /**
+     * @param  {number} affector
+     * @returns number
+     */
+    public mod(affector: number): number{
+        // 剰余計算
+        const _affector = Decimal.trim(affector);
+        return this._intValue[1] % _affector;
+    }
+
+    /**
+     * @param  {number|Decimal} target
+     * @param  {Boolean=false} equal
+     * @returns Boolean
+     */
+    public isBiggerThan(target: number | Decimal, equal: Boolean = false): Boolean {
+        // 引数より小さければfalse
         const a = new Decimal(this.toString());
         try{
             a.sub(target);
         } catch (e) {
             if (e instanceof RangeError) {
-                return true;
+                return false;
             }
         }
-        return false;
+        if (a.toString() === new Decimal(target).toString()) {
+            // 等しければ引数に従う
+            return equal;
+        } else {
+            // 等しくなければ大きいのでtrue
+            return true;
+        }
     }
 }
