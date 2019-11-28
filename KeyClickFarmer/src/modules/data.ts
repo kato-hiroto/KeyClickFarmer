@@ -83,9 +83,9 @@ export default class Data implements DataType {
 
     public load() {
         // ファイル読み込み
-		let config: InputType;
-		let config_main: InputType;
-		let config_odd: InputType;
+		let config: InputType | undefined;
+		let config_main: InputType | undefined = undefined;
+		let config_odd: InputType | undefined;
 		let loading_code : number = 0;
 
 		// メインファイルの読み込み
@@ -117,20 +117,26 @@ export default class Data implements DataType {
 				config = config_odd;
 				break;
 			case 0:
-				const maintime : Decimal = (config_main.time !== undefined ? new Decimal(config_main.time) : new Decimal("0"));
-				const oddtime  : Decimal = (config_odd.time  !== undefined ? new Decimal(config_odd.time)  : new Decimal("0"));
+				const maintime : Decimal = config_main !== undefined ? this.safeDecimal(config_main.time) : new Decimal("0");
+				const oddtime  : Decimal = config_odd  !== undefined ? this.safeDecimal(config_odd.time)  : new Decimal("0");
 				config = maintime.isBiggerThan(oddtime) ? config_main : config_odd;
 				break;
 		}
 		
-		// データ読み込み
-		this.keyCount = new Decimal(config.keyCount);
-		this.time     = Number(config.time);
-		this.pt       = new Decimal(config.Point);
-		this.allpt    = new Decimal(config.allPoint);
-		this.power    = new Decimal(config.Power);
-		this.energy   = Number(config.Energy);
-		this.unit     = Number(config.Unit);
-		this.titles   = config.Titles;
+        // データ読み込み
+        if (config !== undefined) {
+            this.keyCount = this.safeDecimal(config.keyCount);
+            this.time     = Number(config.time);
+            this.pt       = this.safeDecimal(config.Point);
+            this.allpt    = this.safeDecimal(config.allPoint);
+            this.power    = this.safeDecimal(config.Power);
+            this.energy   = Number(config.Energy);
+            this.unit     = Number(config.Unit);
+            this.titles   = String(config.Titles);
+        }
+    }
+
+    private safeDecimal(obj: string | Decimal | undefined): Decimal {
+        return obj !== undefined ? new Decimal(obj) : new Decimal("0");
     }
 }

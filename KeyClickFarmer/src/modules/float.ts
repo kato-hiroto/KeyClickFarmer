@@ -188,7 +188,7 @@ export default class Float {
             const b = new Float(affector);
             this.simpleCalculation(0, Mode.RShift, true);
             for (let i = 0; i < b.cellCount; i++) {
-                this.simpleCalculation(a.simpleCalculation(b.parseNumbers[i], Mode.Mul), Mode.Add, true);
+                this.simpleCalculation(a.simpleCalculation(b.parseNumbers()[i], Mode.Mul), Mode.Add, true);
                 this.fixIntValues();
                 b.dotPos += Float.DIGIT;
             }

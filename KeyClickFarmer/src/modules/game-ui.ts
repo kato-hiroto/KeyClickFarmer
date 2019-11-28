@@ -1,7 +1,5 @@
 "use strict";
-import {window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, OutputChannel} from "vscode";
-var fs = require("fs");
-var path = require("path");
+import {window, StatusBarAlignment, StatusBarItem, OutputChannel} from "vscode";
 import Data from "./data";
 import GameLogic from "./game-logic";
 

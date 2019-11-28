@@ -21,7 +21,12 @@
         ".vscode-test"
     ],
     "files": [
-      "src/modules/decimal.ts",
-      "src/test/decimal.test.ts"
+        "src/extension.ts",
+        "src/modules/data.ts",
+        "src/modules/decimal.ts",
+        "src/modules/float.ts",
+        "src/modules/game-logic.ts",
+        "src/modules/realtime-event.ts",
+        "src/test/decimal.test.ts"
     ]
 }
