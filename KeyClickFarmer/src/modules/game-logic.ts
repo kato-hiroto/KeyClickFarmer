@@ -6,6 +6,7 @@ export default class GameLogic {
 
     public static readonly UNIT = 18;
     private _lastUseCost = new Decimal("0");
+    private _lastSuccessAddPower = false;
     private _lastAddPower = new Decimal("0");
     private _lastPointBeforePowerUp = new Decimal("0");
     private _lastUnitBeforePowerUp = 0;
@@ -20,6 +21,10 @@ export default class GameLogic {
     
     get lastUseCost(): Decimal {
         return this._lastUseCost;
+    }
+
+    get lastSuccessAddPower(): Boolean {
+        return this._lastSuccessAddPower;
     }
 
     get lastAddPower(): Decimal {
@@ -56,7 +61,7 @@ export default class GameLogic {
         }
     }
 
-    public doPushButton(): boolean {
+    public doPushButton() {
         // PowerUpボタンを押したとき
         let pt    = new Decimal(this._data.pt);
         let cost  = new Decimal(100);
@@ -95,9 +100,10 @@ export default class GameLogic {
                 this._data.pt.divByPow10(GameLogic.UNIT, true);
                 this._data.allpt.divByPow10(GameLogic.UNIT, true);
             }
-            return true;
+            this._lastSuccessAddPower = true;
+            return;
         }
-        return false;
+        this._lastSuccessAddPower = false;
     }
     
     public makeMessage() : string{

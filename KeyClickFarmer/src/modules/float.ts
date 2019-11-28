@@ -5,7 +5,7 @@ enum Mode {
     Add,
     Sub,
     Mul,
-    DivByPow10
+    RShift
 }
 
 // 有効桁数が任意の浮動小数値
@@ -59,7 +59,7 @@ export default class Float {
             case Mode.Sub: result = now - value; break;
             case Mode.Mul: result = now * value; break;
             case Mode.Input: result = value; break;
-            case Mode.DivByPow10: result = now / Math.pow(10, Math.floor(value)); break;
+            case Mode.RShift: result = now / Math.pow(10, Math.floor(value)); break;
         }
         if (index >= this._intValues.length) {
             this._intValues.push(result);
@@ -75,29 +75,30 @@ export default class Float {
         const nowValue = this.getIntValue(index);
         const dig10 = Math.pow(10, Float.DIGIT);
 
-        if (nowValue === -1) {
-            return;
-        } else if (nowValue < 0) { 
+        if (index === this._intValues.length - 1) {
+            // 最上位桁の処理
+            if (nowValue === -1) {
+                return;
+            } else if (nowValue === 0) {
+                this._intValues.pop();
+                return;
+            }
+        }
+        if (nowValue < 0) { 
             // 繰り下がり処理
             const big = Math.ceil(-nowValue / dig10);
             const center = nowValue + dig10 * Math.max(big, 0);
             this.setIntValue(index + 1, big, Mode.Sub);
             this.setIntValue(index, center);
-        } else if (nowValue !== 0){
-            // 桁移動の処理
-            const int = Math.floor(nowValue);
-            const center = int % dig10;                             // 残留分
-            const big = (int - center) / dig10;                     // 桁上がり分
-            const small = Math.floor((nowValue - int) * dig10);     // 桁下がり分
-            this.setIntValue(index + 1, big, Mode.Add);
-            this.setIntValue(index, center);
-            this.setIntValue(index - 1, small, Mode.Add);
-        } else {
-            // 要らない要素は消去
-            if (index === this._intValues.length - 1) {
-                this._intValues.pop();
-            }
         }
+        // 桁移動の処理
+        const int = Math.floor(nowValue);
+        const center = int % dig10;                             // 残留分
+        const big = (int - center) / dig10;                     // 桁上がり分
+        const small = Math.floor((nowValue - int) * dig10);     // 桁下がり分
+        this.setIntValue(index + 1, big, Mode.Add);
+        this.setIntValue(index, center);
+        this.setIntValue(index - 1, small, Mode.Add);
     }
 
     public fixIntValues() {
@@ -185,6 +186,7 @@ export default class Float {
             // 破壊的乗算
             const a = new Float(this);
             const b = new Float(affector);
+            this.simpleCalculation(0, Mode.RShift, true);
             for (let i = 0; i < b.cellCount; i++) {
                 this.simpleCalculation(a.simpleCalculation(b.parseNumbers[i], Mode.Mul), Mode.Add, true);
                 this.fixIntValues();

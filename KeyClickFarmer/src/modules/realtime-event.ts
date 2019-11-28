@@ -1,11 +1,10 @@
 "use strict";
-import {window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, OutputChannel} from "vscode";
-import Data from "./data";
+import {window, Disposable} from "vscode";
 import GameLogic from "./game-logic";
 import GameUI from "./game-ui";
 
 // 自動実行とキータイプへの反応
-class RealtimeEvent {
+export default class RealtimeEvent {
     
     private _disposable: Disposable;
 
@@ -20,6 +19,7 @@ class RealtimeEvent {
     public startTimer(){
         setInterval(() => {
             this._logic.doEverySecond();
+            this._ui.showStatus();
         }, 1000);
     }
     
@@ -30,6 +30,7 @@ class RealtimeEvent {
             return;
         }
         this._logic.doKeyClick();
+        this._ui.showStatus();
     }
     
     dispose() {

@@ -10,21 +10,27 @@ export default class GameUI{
     private _statusBarItem: StatusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
     private _overview: OutputChannel = window.createOutputChannel("keyclick-output");
 
-    constructor(private _data: Data, private _logic: GameLogic) {
+    constructor(private _data: Data, private _logic: GameLogic, private _buttonCommand: string) {
     }
 
     get statusBarItem(): StatusBarItem {
         return this._statusBarItem;
     }
 
-    public showStatus() {
+    public showStatus(): void {
         // ステータスバーの表示
         this._statusBarItem.text = `$(chevron-up) ${this._data.pt.toString(2)} ${Data.unitString(this._data.unit)}`;
-        this._statusBarItem.command = "extension.keyclickfarmer-powerup";
+        this._statusBarItem.command = this._buttonCommand;
         this._statusBarItem.show();
     }
 
-    public showInfo() {
+    public showMessage(): void {
+        this._overview.clear();
+        this._overview.append(this.showInfo() + this.showPower());
+        this._overview.show(true);
+    }
+
+    private showInfo(): string {
         // ボタンを押したときの表示
         const mes0 = `>> KeyClick Farmer Status Information\n`;
         const mes1 = ` Key Counter : ${Data.addComma(this._data.keyCount)} types\n`;
@@ -37,14 +43,12 @@ export default class GameUI{
         const result = mes0 + mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + this._logic.makeMessage();
 
         window.showInformationMessage("Look at the Output Window.");
-        this._overview.clear();
-        this._overview.append(result);
-        this._overview.show(true);
+        return result + "\n";
     }
 
-    public showPower(success: Boolean) {
+    private showPower(): string {
         // ボタンを押したときの表示
-        if (success) {
+        if (this._logic.lastSuccessAddPower) {
             let result: string;
             const mes1 = `>> Power up!\n`;
             const mes2 = ` Cost : -${Data.addComma(this._logic.lastUseCost)} ${Data.unitString(this._logic.lastUnitBeforePowerUp)}\n`;
@@ -60,14 +64,12 @@ export default class GameUI{
                 window.showInformationMessage("Exchange success. Look at the Output Window.");
                 result = mes1 + mes2 + mes3;
             }
-            this._overview.clear();
-            this._overview.append(result);
-            this._overview.show(true);
+            return result + "\n";
         } else {
             // ptが100未満
             window.showInformationMessage("Oops! Your point is less than exchangeable points.");
         }
-        this.showStatus();
+        return "\n";
     }
 }
 
