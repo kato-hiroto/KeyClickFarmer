@@ -70,8 +70,8 @@ export default class GameUI{
         return "\n";
     }
 
-    dispose() {
-        this._statusBarItem.dispose();
-    }
+    // dispose() {
+    //     this._statusBarItem.dispose();
+    // }
 }
 
