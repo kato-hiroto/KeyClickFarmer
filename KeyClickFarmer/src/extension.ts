@@ -19,9 +19,8 @@ export function activate(context: ExtensionContext) {
     let button = commands.registerCommand(commandString, () => {
         logic.doPushButton();
         ui.showMessage();
-        ui.showStatus();
+        // ui.showStatus();
     });
-
 
     context.subscriptions.push(event);
     context.subscriptions.push(button);

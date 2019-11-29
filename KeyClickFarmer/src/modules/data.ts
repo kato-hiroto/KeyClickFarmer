@@ -42,11 +42,13 @@ export default class Data implements DataType {
 
     constructor() {
         this.load();
+        console.log(this.energy);
     }
     
     public static addComma(value: number | Decimal, fix: boolean = true) : string{
         // 数値にコンマをつけて表示
-        return String(fix ? value.toString(2) : value.toString()).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+        console.log(value);
+        return (fix ? new Decimal(value).toString(2) : value.toString()).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
     }
 
     public static unitString(value: number) : string{

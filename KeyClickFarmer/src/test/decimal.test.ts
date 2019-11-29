@@ -94,6 +94,18 @@ describe("test Decimal", () => {
         assert.equal(target2.mod(other2).toString(), "0");
         assert.equal(target3.mod(other3).toString(), "1");
     });
+    
+    it("大小チェック", () => {
+        const target1 = new Decimal("123456789123456789");
+        const target2 = new Decimal("0.1");
+        const target3 = new Decimal("12345.67");
+        const other1 = 999999999999999999;
+        const other2 = 0.01;
+        const other3 = 12345.6700;
+        assert.equal(target1.isBiggerThan(other1), false);
+        assert.equal(target2.isBiggerThan(other2), true);
+        assert.equal(target3.equal(other3), true);
+    });
 });
 
 // public toNumbers(): Array<number> 
