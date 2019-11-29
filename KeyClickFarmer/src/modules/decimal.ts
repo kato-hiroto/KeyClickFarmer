@@ -41,16 +41,18 @@ export default class Decimal implements Number {
             decStr = Math.floor((val - Math.floor(val)) * Decimal.DIGIT10).toString();
         } else if (typeof val === "string") {
             const dotPos = val.indexOf(".") < 0 ? val.length : val.indexOf(".");
+            const tmpDec = val.substring(dotPos + 1);
             intStr = val.substring(0, dotPos);
-            decStr = val.substring(dotPos + 1);
+            decStr = tmpDec + "0".repeat(Decimal.DIGIT - tmpDec.length);
         } else {
             const tmp = val.toString();
             const dotPos = tmp.indexOf(".") < 0 ? tmp.length : tmp.indexOf(".");
+            const tmpDec = tmp.substring(dotPos + 1);
             intStr = tmp.substring(0, dotPos);
-            decStr = tmp.substring(dotPos + 1);
+            decStr = tmpDec + "0".repeat(Decimal.DIGIT - tmpDec.length);
         }
         // 格納する
-        decStr += "0".repeat(Decimal.DIGIT);
+        decStr = "0".repeat(Decimal.DIGIT - decStr.length) + decStr;
         this._intValue[0] = Number(decStr.substring(0, Decimal.DIGIT));
         for (let i = 1; i <= Decimal.INT; i++) {
             const endStart = intStr.length - (i - 1) * Decimal.DIGIT;
@@ -66,9 +68,11 @@ export default class Decimal implements Number {
         // 値を出力する
         const intStr = this._intValue.slice(1, 5).map((v, _) => {
             return "0".repeat(Decimal.DIGIT - v.toString().length) + v.toString();
-        }).reverse().join("").replace(/^0+/, "");
-        const decStrDef = "." + this._intValue[0].toString().replace(/0+$/, "");
-        const decStrUnd = ("." + this._intValue[0].toString()).replace(/\.?0*$/, "");
+        }).reverse().join("").replace(/^0+(.+)$/, "$1");
+        const decStr = this._intValue[0].toString();
+        const decStrPad = "0".repeat(Decimal.DIGIT - decStr.length) + decStr;
+        const decStrDef = ("." + decStrPad).replace(/0+$/, "");
+        const decStrUnd = ("." + decStrPad).replace(/\.?0*$/, "");
         return intStr + (decimalLength === undefined ? decStrUnd : (decStrDef + "0".repeat(decimalLength)).substring(0, decimalLength + 1));
     }
 
@@ -156,7 +160,8 @@ export default class Decimal implements Number {
             // 破壊的 : 10の累乗による割り算
             const _n : number = new Decimal(n).toNumbers()[1];
             const _m = Math.floor(_n / Decimal.DIGIT);
-            this._intValue.map((_, i) => {
+            // return this._intValue[0];
+            this._intValue.forEach((_, i) => {
                 this._intValue[i] = i + _m <= Decimal.INT ? this._intValue[i + _m] : 0;
             });
             this.mul(1 / Math.pow(10, _n % Decimal.DIGIT), true);
@@ -170,7 +175,12 @@ export default class Decimal implements Number {
     
     public mod(affector: number): number{
         // 剰余計算
-        return this._intValue[1] % new Decimal(affector).toNumbers()[1];
+        let sum = 0;
+        const _affector = new Decimal(affector).toNumbers()[1];
+        this._intValue.slice(1, Decimal.INT).forEach((v, _) => {
+            sum += v % _affector;
+        });
+        return sum % _affector;
     }
 
     public equal(target: number | string | Decimal) {

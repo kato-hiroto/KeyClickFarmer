@@ -3,19 +3,20 @@ import {window, Disposable} from "vscode";
 import GameLogic from "./game-logic";
 import GameUI from "./game-ui";
 
-// キータイプへの反応
+// 自動実行とキータイプへの反応
 export default class RealtimeEvent {
     
     private _disposable: Disposable;
 
     constructor(private _logic: GameLogic, private _ui: GameUI) {
         let subscriptions: Disposable[] = [];
+        this.startTimer();
         window.onDidChangeTextEditorSelection(this._onEvent, this, subscriptions);
         window.onDidChangeActiveTextEditor(this._onEvent, this, subscriptions);
         this._disposable = Disposable.from(...subscriptions);
     }
-
-    public StartTimer() {
+    
+    public startTimer(){
         setInterval(() => {
             this._logic.doEverySecond();
             this._ui.showStatus();
