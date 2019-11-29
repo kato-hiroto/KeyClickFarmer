@@ -2,7 +2,7 @@ import {assert} from "chai";
 
 import Float from "../modules/float";
 
-describe("test Decimal", () => {
+describe("test Float", () => {
 
     it("保存チェック1", () => {
         const target = new Float("123456781234.5678");

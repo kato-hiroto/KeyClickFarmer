@@ -27,6 +27,7 @@
         "src/modules/float.ts",
         "src/modules/game-logic.ts",
         "src/modules/realtime-event.ts",
+        "src/test/decimal.test.ts",
         "src/test/float.test.ts"
     ]
 }
