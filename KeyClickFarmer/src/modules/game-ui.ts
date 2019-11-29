@@ -31,13 +31,13 @@ export default class GameUI{
     private showInfo(): string {
         // ボタンを押したときの表示
         const mes0 = `>> KeyClick Farmer Status Information\n`;
-        const mes1 = ` Key Counter : ${Data.addComma(this._data.keyCount)}`     +` types\n`;
-        const mes2 = ` Elapsed     : ${Data.addComma(this._data.time)}`         +` sec | ${Data.addComma(this._data.time / 3600)} h\n`;
-        const mes3 = ` Point       : ${Data.addComma(this._data.pt)}`           +` ${Data.unitString(this._data.unit)}\n`;
-        const mes4 = ` Point All   : ${Data.addComma(this._data.allpt)}`        +` ${Data.unitString(this._data.unit)}\n`;
-        const mes5 = ` Now Power   : ${Data.addComma(this._data.power)}`        +` ${Data.unitString(this._data.unit)}/type\n`;
-        const mes6 = ` Energy      : ${Data.addComma(this._data.energy, false)}`+` sec | ${(this._data.energy / this._data.energy_max * 100).toFixed(2)}%\n`;
-        const mes7 = ` Unit Size   : ${Data.addComma(this._data.unit + 1)}\n`;
+        const mes1 = ` Key Counter : ${Data.addComma(this._data.keyCount, false)}`  +` types\n`;
+        const mes2 = ` Elapsed     : ${Data.addComma(this._data.time, false)}`      +` sec | ${Data.addComma(this._data.time / 3600)} h\n`;
+        const mes3 = ` Point       : ${Data.addComma(this._data.pt)}`               +` ${Data.unitString(this._data.unit)}\n`;
+        const mes4 = ` Point All   : ${Data.addComma(this._data.allpt)}`            +` ${Data.unitString(this._data.unit)}\n`;
+        const mes5 = ` Now Power   : ${Data.addComma(this._data.power)}`            +` ${Data.unitString(this._data.unit)}/type\n`;
+        const mes6 = ` Energy      : ${Data.addComma(this._data.energy, false)}`    +` sec | ${(this._data.energy / this._data.energy_max * 100).toFixed(2)}%\n`;
+        const mes7 = ` Unit Size   : ${Data.addComma(this._data.unit + 1, false)}\n`;
         const result = mes0 + mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + this._logic.makeMessage();
 
         window.showInformationMessage("Look at the Output Window.");

@@ -42,7 +42,6 @@ export default class Data implements DataType {
 
     constructor() {
         this.load();
-        console.log(this.energy);
     }
     
     public static addComma(value: number | Decimal, fix: boolean = true) : string{
@@ -145,9 +144,5 @@ export default class Data implements DataType {
 
     private safeDecimal(obj: string | Decimal | undefined): Decimal {
         return obj !== undefined ? new Decimal(obj) : new Decimal("0");
-    }
-    
-    dispose() {
-        this.save();
     }
 }

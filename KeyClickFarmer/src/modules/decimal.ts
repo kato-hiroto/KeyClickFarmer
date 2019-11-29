@@ -106,10 +106,10 @@ export default class Decimal implements Number {
         if (destructive) {
             // 破壊的加算
             const b : number[] = new Decimal(affector).toNumbers();
-            this._intValue.forEach((_, i, a) => {
-                a[i] += b[i];
+            for (let i = 0; i <= Decimal.INT; i++) {
+                this._intValue[i] += b[i];
                 this.Carry(i);
-            });
+            }
             return this;
         } else {
             // 非破壊的加算
@@ -122,10 +122,10 @@ export default class Decimal implements Number {
         if (destructive) {
             // 破壊的減算
             const b : number[] = new Decimal(affector).toNumbers();
-            this._intValue.forEach((_, i, a) => {
-                a[i] -= b[i];
+            for (let i = 0; i <= Decimal.INT; i++) {
+                this._intValue[i] -= b[i];
                 this.Carry(i);
-            });
+            }
             return this;
         } else {
             // 非破壊的減算
@@ -137,16 +137,16 @@ export default class Decimal implements Number {
     public mul(affector: number, destructive: Boolean = false): Decimal{
         if (destructive) {
             // 破壊的 : 数値との乗算
-            const b : number = new Decimal(affector).value as number;
-            this._intValue.forEach((_, i, a) => {
-                a[i] *= b;
-            });
-            this._intValue.forEach((_, i) => {
-                this.Borrow(Decimal.INT - i);
-            });
-            this._intValue.forEach((_, i) => {
+            const b : number = new Decimal(affector).value as number;            
+            for (let i = 0; i < Decimal.INT; i++) {
+                this._intValue[i] *= b;
+            }            
+            for (let i = Decimal.INT; i >= 0; i--) {
+                this.Borrow(i);
+            }            
+            for (let i = 0; i < Decimal.INT; i++) {
                 this.Carry(i);
-            });
+            }
             return this;
         } else {
             // 非破壊的

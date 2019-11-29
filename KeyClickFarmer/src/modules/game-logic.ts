@@ -39,16 +39,14 @@ export default class GameLogic {
         return this._lastAddTitle;
     }
     
-    public doEverySecond(): boolean {
+    public doEverySecond(): void {
         // 自動ポイント加算
         if (this._data.energy > 0) {
             this._data.addPt(this._data.power);
             this._data.energy -= 1;
-            return true;
         }
         this._data.time += 1;
         this._data.save();
-        return false;
     }
     
     public doKeyClick() {
@@ -67,7 +65,7 @@ export default class GameLogic {
         let cost  = new Decimal(100);
         let digit = 0;
         let power = new Decimal(0.01);
-        let powerUpRate = this._data.unit > 0 ? 10 + 7 * Math.pow(0.85, this._data.unit - 1) : 20;
+        let powerUpRate = this._data.unit % 20 > 0 ? 10 + 7 * Math.pow(0.85, this._data.unit % 20 - 1) : 20;
 
         // PowerUp量を計算
         while (pt.isBiggerThan(1000, true)) {
