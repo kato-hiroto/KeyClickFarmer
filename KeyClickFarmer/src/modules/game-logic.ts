@@ -85,8 +85,8 @@ export default class GameLogic {
 
         // 変化量を記録
         this._lastPointBeforePowerUp = this._data.pt;
-        this._lastUseCost.setValue(cost);
-        this._lastAddPower.setValue(power);
+        this._lastUseCost.value = cost;
+        this._lastAddPower.value = power;
         this._lastUnitBeforePowerUp = this._data.unit;
 
         // ポイント消費
