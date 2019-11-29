@@ -39,6 +39,10 @@ export default class Data implements DataType {
     public unit: number = 0;
     public energy: number = this.energy_max;
     public titles: string = "";
+
+    constructor() {
+        this.load();
+    }
     
     public static addComma(value: number | Decimal, fix: boolean = true) : string{
         // 数値にコンマをつけて表示
@@ -79,12 +83,13 @@ export default class Data implements DataType {
                 console.log(err);
             }
         });
+        console.log("save finish!");
     }
 
     public load() {
         // ファイル読み込み
-		let config: InputType | undefined;
-		let config_main: InputType | undefined = undefined;
+		let config: InputType | undefined = undefined;
+		let config_main: InputType | undefined;
 		let config_odd: InputType | undefined;
 		let loading_code : number = 0;
 
@@ -138,5 +143,9 @@ export default class Data implements DataType {
 
     private safeDecimal(obj: string | Decimal | undefined): Decimal {
         return obj !== undefined ? new Decimal(obj) : new Decimal("0");
+    }
+    
+    dispose() {
+        this.save();
     }
 }

@@ -22,6 +22,9 @@ export function activate(context: ExtensionContext) {
         ui.showStatus();
     });
 
+
+    context.subscriptions.push(data);
+    context.subscriptions.push(ui);
     context.subscriptions.push(event);
     context.subscriptions.push(button);
 }

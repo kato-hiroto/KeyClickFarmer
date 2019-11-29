@@ -62,13 +62,14 @@ export default class Decimal implements Number {
         return this._intValue;
     }
     
-    public toString(decimalLength: number = Decimal.DIGIT) : string {
+    public toString(decimalLength: number | undefined = undefined) : string {
         // 値を出力する
         const intStr = this._intValue.slice(1, 5).map((v, _) => {
             return "0".repeat(Decimal.DIGIT - v.toString().length) + v.toString();
         }).reverse().join("").replace(/^0+/, "");
-        const decStr = ("." + this._intValue[0].toString()).substring(0, decimalLength + 1).replace(/\.?0*$/, "");
-        return intStr + decStr;
+        const decStrDef = "." + this._intValue[0].toString().replace(/0+$/, "");
+        const decStrUnd = ("." + this._intValue[0].toString()).replace(/\.?0*$/, "");
+        return intStr + (decimalLength === undefined ? decStrUnd : (decStrDef + "0".repeat(decimalLength)).substring(0, decimalLength + 1));
     }
 
     private Carry(index : number): void {

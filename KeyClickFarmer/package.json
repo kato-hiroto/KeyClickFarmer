@@ -24,10 +24,6 @@
     "contributes": {
         "commands": [
             {
-                "command": "extension.keyclickfarmer-info",
-                "title": "KeyClickFarmer-Info"
-            },
-            {
                 "command": "extension.keyclickfarmer-powerup",
                 "title": "KeyClickFarmer-PowerUp"
             }
