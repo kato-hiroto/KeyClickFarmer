@@ -75,7 +75,7 @@ export default class Data implements DataType {
             Titles:   this.titles
         };
 		const json = JSON.stringify(obj);
-		const filename = "../../keyclickfarmer-savedata"+ (this.time % 2 === 0 ? "" : "-odd") +".json";
+		const filename = "../../../keyclickfarmer-savedata"+ (this.time % 2 === 0 ? "" : "-odd") +".json";
 
         fs.writeFile(path.resolve(__dirname, filename), json, "utf8", (err: Error | null) => {
             if (err) {
@@ -93,7 +93,7 @@ export default class Data implements DataType {
 
 		// メインファイルの読み込み
         try {
-            config_main = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../keyclickfarmer-savedata.json"), "utf8"));
+            config_main = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../../keyclickfarmer-savedata.json"), "utf8"));
         } catch (e){
             loading_code += 1;
 		}
