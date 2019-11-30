@@ -19,5 +19,14 @@
     "exclude": [
         "node_modules",
         ".vscode-test"
+    ],
+    "files": [
+        "src/extension.ts",
+        "src/modules/data.ts",
+        "src/modules/decimal.ts",
+        "src/modules/game-logic.ts",
+        "src/modules/game-ui.ts",
+        "src/modules/realtime-event.ts",
+        "src/test/decimal.test.ts"
     ]
 }
