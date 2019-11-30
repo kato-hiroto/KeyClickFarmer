@@ -39,11 +39,6 @@ export default class Decimal implements Number {
         if (typeof val === "number") {
             intStr = Math.floor(val).toString();
             decStr = Math.floor((val - Math.floor(val)) * Decimal.DIGIT10).toString();
-        } else if (typeof val === "string") {
-            const dotPos = val.indexOf(".") < 0 ? val.length : val.indexOf(".");
-            const tmpDec = val.substring(dotPos + 1);
-            intStr = val.substring(0, dotPos);
-            decStr = tmpDec + "0".repeat(Decimal.DIGIT - tmpDec.length);
         } else {
             const tmp = val.toString();
             const dotPos = tmp.indexOf(".") < 0 ? tmp.length : tmp.indexOf(".");
