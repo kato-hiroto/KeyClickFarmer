@@ -12,10 +12,7 @@ Let's earn a lot of points by continuing key typing!
 ### points
 This is your now points.  
 Exchange the points to the power when you click.  
-
-### information mark
-This shows you now status.  
-Look at the output window when you click.  
+And you can see the more status of your typings at the output window.
 
 ## Information -> Energy
 In this game, you get points for one key-typing automatically every second.  
@@ -24,15 +21,18 @@ Energy is consumed 1 in every second, recovering by 10 for one key-typing.
 
 ## Update Log
 ### version 1.0.0
-- released
+- Released
 
 ### version 1.1.0
-- added the function of Counting Elapsed Time
-- added the message on achievements
-- change the game systems
-- fixed bugs
-- fixed typo
+- Added the function of Counting Elapsed Time
+- Added the message on achievements
+- Change the game systems
+- Fixed bugs
+- Fixed typo
+
+### version 1.2.0
+- Refactored the code
+- Added the message on achievements
 
 ## Contact
 karofuji2@gmail.com
-
