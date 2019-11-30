@@ -9,7 +9,6 @@ const commandString = "extension.keyclickfarmer-powerup";
 
 // エディタ起動時（アクティベート時）の処理
 export function activate(context: ExtensionContext) {
-    console.log("Congratulations, your extension \"keyclickfarmer\" is now active!");
 
     const data = new Data();
     const logic = new GameLogic(data);

@@ -6,7 +6,10 @@ This is the game of using key-typing counts.
 When you type a character, the points in the status bar increase 1pt.  
 And you can exchange the points to the power of getting more points.  
 Let's earn a lot of points by continuing key typing!  
-![demo](https://raw.githubusercontent.com/kato-hiroto/KeyClickFarmer/master/KeyClickFarmer01.gif)
+
+  
+![demo](https://raw.githubusercontent.com/kato-hiroto/KeyClickFarmer/master/KeyClickFarmer01.gif)  
+  
 
 ## StatusBar Buttons
 ### points

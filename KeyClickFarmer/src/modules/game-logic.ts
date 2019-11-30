@@ -90,9 +90,7 @@ export default class GameLogic {
         // ポイント消費
         if (this._data.pt.isBiggerThan(cost, true)) {
             this._data.pt.sub(cost, true);
-            console.log(this._data.power.value);
             this._data.power.add(power, true);
-            console.log(this._data.power.value);
             if (digit >= GameLogic.UNIT) {
                 // ptの単位系を 10^UNIT する
                 this._data.unit += 1;
