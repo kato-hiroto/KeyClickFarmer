@@ -44,7 +44,7 @@
         "chai": "^4.2.0",
         "tslint": "^5.8.0",
         "typemoq": "^2.1.0",
-        "typescript": "^2.6.1",
+        "typescript": "^2.9.2",
         "vscode": "^1.1.21"
     },
     "dependencies": {}
