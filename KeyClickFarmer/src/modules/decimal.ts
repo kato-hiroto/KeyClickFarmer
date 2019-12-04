@@ -155,7 +155,6 @@ export default class Decimal implements Number {
             // 破壊的 : 10の累乗による割り算
             const _n : number = new Decimal(n).toNumbers()[1];
             const _m = Math.floor(_n / Decimal.DIGIT);
-            // return this._intValue[0];
             this._intValue.forEach((_, i) => {
                 this._intValue[i] = i + _m <= Decimal.INT ? this._intValue[i + _m] : 0;
             });

@@ -3,6 +3,7 @@ import {commands, ExtensionContext} from "vscode";
 import Data from "./modules/data";
 import GameLogic from "./modules/game-logic";
 import GameUI from "./modules/game-ui";
+import Decorate from "./modules/decorate";
 import RealtimeEvent from "./modules/realtime-event";
 
 const commandString = "extension.keyclickfarmer-powerup";
@@ -13,7 +14,8 @@ export function activate(context: ExtensionContext) {
     const data = new Data();
     const logic = new GameLogic(data);
     const ui = new GameUI(data, logic, commandString);
-    const event = new RealtimeEvent(logic, ui);
+    const decorate = new Decorate();
+    const event = new RealtimeEvent(logic, ui, decorate);
 
     let button = commands.registerCommand(commandString, () => {
         logic.doPushButton();

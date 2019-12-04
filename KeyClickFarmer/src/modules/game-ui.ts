@@ -39,8 +39,6 @@ export default class GameUI{
         const mes6 = ` Energy      : ${Data.addComma(this._data.energy, false)}`    +` sec | ${(this._data.energy / this._data.energy_max * 100).toFixed(2)}%\n`;
         const mes7 = ` Unit Size   : ${Data.addComma(this._data.unit + 1, false)}\n`;
         const result = mes0 + mes1 + mes2 + mes3 + mes4 + mes5 + mes6 + mes7 + this._logic.makeMessage();
-
-        window.showInformationMessage("Look at the Output Window.");
         return result + "\n";
     }
 
@@ -69,9 +67,5 @@ export default class GameUI{
         }
         return "\n";
     }
-
-    // dispose() {
-    //     this._statusBarItem.dispose();
-    // }
 }
 
