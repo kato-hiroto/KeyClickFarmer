@@ -24,22 +24,36 @@
     "contributes": {
         "commands": [
             {
-                "command": "extension.keyclickfarmer-powerup",
+                "command": "keyclickfarmer.powerup",
                 "title": "KeyClickFarmer-PowerUp"
+            },
+            {
+                "command": "keyclickfarmer.cheatofchangestatus",
+                "title": "KeyClickFarmer-cheatOfChangeStatus"
             }
         ],
-		"colors": [
-			{
-				"id": "extension.unit1BackGround",
-				"description": "Background decoration color for Unit1 bonus.",
-				"defaults": {
-					"dark": "#FF000055",
-					"light": "#FF000055",
-					"highContrast": "#FF000055"
-				}
-			}
-		]
-	},
+        "colors": [
+            {
+                "id": "keyclickfarmer.effectBackGround",
+                "description": "decoration background color",
+                "defaults": {
+                    "dark": "#FF000055",
+                    "light": "#FF000055",
+                    "highContrast": "#FF000055"
+                }
+            }
+        ],
+        "configuration": {
+            "title": "KeyClickFarmer",
+            "properties": {
+                "keyclickfarmer.useInputEffect": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "An effect attaches to your key-typings."
+                }
+            }
+        }
+    },
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",

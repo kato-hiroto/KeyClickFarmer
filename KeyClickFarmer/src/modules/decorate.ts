@@ -14,7 +14,7 @@ export default class Decorate{
 
     // 色の定義
 	private unit1ColorType = window.createTextEditorDecorationType({
-		backgroundColor: { id: 'extension.unit1BackGround' }
+		backgroundColor: { id: "keyclickfarmer.effectBackGround" }
 	});
 
     constructor() {
@@ -48,7 +48,7 @@ export default class Decorate{
 
     // 着色
     private drawDecorations() {
-		if (!this.activeEditor) {
+		if (!this.activeEditor || !workspace.getConfiguration().get("keyclickfarmer.useInputEffect")) {
 			return;
 		}
 		const highLights: DecorationOptions[] = [];
@@ -57,10 +57,8 @@ export default class Decorate{
             const startChar = obj.option.range.start.character;
             const endLine = obj.option.range.end.line;
             const endChar = obj.option.range.end.character + 1;
-            highLights.push({range: new Range(startLine, startChar, endLine, endChar), hoverMessage: "aaa" });
+            highLights.push({range: new Range(startLine, startChar, endLine, endChar), hoverMessage: "input"});
         }
-        const range = highLights[highLights.length - 1].range;
-        console.log("range : " + range.start.toString() + " to " + range.start.toString())
         this.activeEditor.setDecorations(this.unit1ColorType, highLights);
     }
 

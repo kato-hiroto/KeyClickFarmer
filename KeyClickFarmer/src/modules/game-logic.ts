@@ -51,7 +51,7 @@ export default class GameLogic {
     
     public doKeyClick() {
         // キータイプしたとき
-        this._data.keyCount.add(1, true);
+        this._data.keyCount += 1;
         this._data.addPt(this._data.power);
         this._data.energy += 10;
         if (this._data.energy > this._data.energy_max) {
@@ -156,6 +156,6 @@ export default class GameLogic {
         // ループ称号
         superTitle = "★".repeat(superUnit);
 
-        return " Your Title : " + baseTitle + " " + superTitle;
+        return " Your Title  : " + baseTitle + " " + superTitle;
     }
 }
