@@ -34,14 +34,17 @@ describe("test Decimal", () => {
         const target2 = new Decimal("111111112222222233333333.4444");
         const target3 = new Decimal("555555555555555555555555.5");
         const target4 = new Decimal("99999999999999999999999999999999");
+        const target5 = new Decimal("1");
         const other1 = new Decimal("111111111111111111111111");
         const other2 = new Decimal("0.11115");
         const other3 = new Decimal("444444444444444444444444.5");
         const other4 = new Decimal("1");
+        const other5 = new Decimal("100000000000000000000000000");
         assert.equal(target1.add(other1).toString(), "222222223333333344444444.4444");
         assert.equal(target2.add(other2).toString(), "111111112222222233333333.55555");
         assert.equal(target3.add(other3).toString(3), "1000000000000000000000000.000");
         assert.throws(() => target4.add(other4), RangeError);
+        assert.equal(target5.add(other5).toString(), "100000000000000000000000001");
     });
 
     it("引き算チェック", () => {
@@ -75,12 +78,15 @@ describe("test Decimal", () => {
         const target1 = new Decimal("123456789123456789");
         const target2 = new Decimal("0.1");
         const target3 = new Decimal("12345.678");
+        const target4 = new Decimal("100000000000000000000000000");
         const other1 = 10;
         const other2 = 2;
         const other3 = 5;
+        const other4 = 18;
         assert.equal(target1.divByPow10(other1).toString(), "12345678.91234567");
         assert.equal(target2.divByPow10(other2).toString(), "0.001");
         assert.equal(target3.divByPow10(other3).toString(), "0.12345678");
+        assert.equal(target4.divByPow10(other4).toString(), "100000000");
     });
     
     it("剰余チェック", () => {

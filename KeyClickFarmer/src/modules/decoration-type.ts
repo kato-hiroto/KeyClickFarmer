@@ -20,7 +20,6 @@ const cssString = (obj: any): string => {
 
 // シンプルなハイライト
 export const simpleHighlight = (_color: string, _rate: number): TextEditorDecorationType => {
-    console.log(process(_color, _rate));
     return window.createTextEditorDecorationType({
         backgroundColor: process(_color, _rate)
     });
@@ -28,7 +27,6 @@ export const simpleHighlight = (_color: string, _rate: number): TextEditorDecora
 
 // 波紋
 export const ripple = (_color: string, _rate: number): TextEditorDecorationType => {
-    console.log(process(_color, _rate));
     const css = {
         "position"          : `absolute`,
         "display"           : `inline-block`,

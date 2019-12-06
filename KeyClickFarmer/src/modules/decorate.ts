@@ -1,5 +1,6 @@
 import {window, workspace, DecorationOptions, Disposable, Range, TextEditorDecorationType} from "vscode";
 import Data from "./data";
+import GameLogic from "./game-logic";
 import {simpleHighlight, ripple} from "./decoration-type";
 
 type RangeTimer = {
@@ -17,7 +18,7 @@ export default class Decorate{
     private _effectColors: Array<TextEditorDecorationType> = new Array(0);
     private _disposable: Disposable;
 
-    constructor(private _data: Data) {
+    constructor(private _data: Data, private _logic: GameLogic) {
         let subscriptions: Disposable[] = [];
         this.setDoCheckDocument(subscriptions);
         this.setDidChangeActiveTextEditor(subscriptions);
@@ -32,6 +33,9 @@ export default class Decorate{
     // 変更箇所検出関数の設定
     private setDoCheckDocument(subscriptions: Disposable[]) {
         return workspace.onDidChangeTextDocument(changeEvent => {
+            if (this._data.unit !== this._logic.lastUnitBeforePowerUp) {
+                this.createDecorationType();
+            }
             for (let change of changeEvent.contentChanges) {
                 const _range = change.range;
                 this._decorateRanges.push({

@@ -28,5 +28,6 @@
         "src/modules/game-logic.ts",
         "src/modules/game-ui.ts",
         "src/modules/realtime-event.ts"
+        // "src/test/decimal.test.ts"
     ]
 }

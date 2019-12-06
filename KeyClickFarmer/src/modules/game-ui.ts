@@ -54,6 +54,9 @@ export default class GameUI{
                 const mes5 = `>> Unit changed. 'E' means 10^${GameLogic.UNIT}. ${this._data.unit >= 5 ? `'X' means 10^${GameLogic.UNIT * 5}.` : ""}\n`;
                 const mes6 = ` ${Data.unitString(this._logic.lastUnitBeforePowerUp)} -> ${Data.unitString(this._data.unit)}\n`;
                 window.showInformationMessage("Exchange success. Your points have exceeded ultimate dimension!");
+                if (this._data.unit === 1 || this._data.unit === 5) {
+                    window.showInformationMessage("You got a new Effect!");
+                }
                 result = mes1 + mes2 + mes3 + mes4 + mes5 + mes6;
             } else {
                 // 通常消費

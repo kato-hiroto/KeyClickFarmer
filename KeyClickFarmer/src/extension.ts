@@ -16,7 +16,7 @@ export function activate(context: ExtensionContext) {
     const data = new Data(context);
     const logic = new GameLogic(data);
     const ui = new GameUI(data, logic, commandString);
-    const decorate = new Decorate(data);
+    const decorate = new Decorate(data, logic);
     const event = new RealtimeEvent(logic, ui);
 
     let button = commands.registerCommand(commandString, () => {
@@ -26,8 +26,8 @@ export function activate(context: ExtensionContext) {
     });
     
     let cheat = commands.registerCommand(cheatCommand, () => {
-        data.addPt(new Decimal("1000000000000"));
-        data.unit += 10;
+        data.addPt(new Decimal("10000000000000000000000"));
+        data.unit += 4;
     });
 
     context.subscriptions.push(decorate);
