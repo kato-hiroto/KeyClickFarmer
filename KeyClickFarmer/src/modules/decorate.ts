@@ -1,4 +1,5 @@
 import {window, workspace, DecorationOptions, Disposable, Range, TextEditorDecorationType} from "vscode";
+import Data from "./data";
 import {simpleHighlight, ripple} from "./decoration-type";
 
 type RangeTimer = {
@@ -10,13 +11,13 @@ export default class Decorate{
 
     private readonly DURATION = 1.5;
     private readonly CHECK_INTERVAL = 0.05;
-    private readonly DEFAULT_COLOR = "#FF000090";
+    private readonly DEFAULT_COLOR = "#00FFFF90";
     private _activeEditor = window.activeTextEditor;
     private _decorateRanges: Array<RangeTimer> = new Array(0);
     private _effectColors: Array<TextEditorDecorationType> = new Array(0);
     private _disposable: Disposable;
 
-    constructor() {
+    constructor(private _data: Data) {
         let subscriptions: Disposable[] = [];
         this.setDoCheckDocument(subscriptions);
         this.setDidChangeActiveTextEditor(subscriptions);
@@ -62,7 +63,14 @@ export default class Decorate{
     // 色の生成
     private createDecorationType(): void {
         // エフェクトの選択
-        const effect = ripple;
+        let effect: (_color: string, _rate: number) => TextEditorDecorationType;
+        let limit = workspace.getConfiguration().get("keyclickfarmer.maxUnitOfUsingEffect");
+        let unit = Math.min((limit !== undefined ? Number(limit) : 200), this._data.unit);
+        if(unit > 4){
+            effect = ripple;
+        } else {
+            effect = simpleHighlight;
+        }
 
         // 濃度を変えて複数生成
         this.effectColorsDispose();
@@ -86,7 +94,9 @@ export default class Decorate{
 
     // 着色
     private drawDecorations(): void {
-        if (!this._activeEditor || !workspace.getConfiguration().get("keyclickfarmer.useInputEffect")) {
+        if (!this._activeEditor || 
+            !workspace.getConfiguration().get("keyclickfarmer.useInputEffect") ||
+            this._data.unit < 1) {
             return;
         }
         

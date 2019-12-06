@@ -16,7 +16,7 @@ export function activate(context: ExtensionContext) {
     const data = new Data(context);
     const logic = new GameLogic(data);
     const ui = new GameUI(data, logic, commandString);
-    const decorate = new Decorate();
+    const decorate = new Decorate(data);
     const event = new RealtimeEvent(logic, ui);
 
     let button = commands.registerCommand(commandString, () => {
