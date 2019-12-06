@@ -1,7 +1,7 @@
 "use strict";
 import {window} from "vscode";
 import Decimal from "./decimal";
-var fs = require("fs");
+import * as fs from "fs";
 var path = require("path");
 
 type InputType = {
@@ -16,7 +16,7 @@ type InputType = {
 };
 
 type DataType = {
-    keyCount: Decimal;
+    keyCount: number;
     time: number;
     pt: Decimal;
     allpt: Decimal;
@@ -31,7 +31,7 @@ export default class Data implements DataType {
 
     public readonly energy_max = 10800;
 
-    public keyCount: Decimal = new Decimal("0");
+    public keyCount: number = 0;
     public time: number = 0;
     public pt: Decimal = new Decimal("0");
     public allpt: Decimal = new Decimal("0");
@@ -46,7 +46,6 @@ export default class Data implements DataType {
     
     public static addComma(value: number | Decimal, fix: boolean = true) : string{
         // 数値にコンマをつけて表示
-        console.log(value);
         return (fix ? new Decimal(value).toString(2) : value.toString()).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
     }
 
@@ -76,15 +75,13 @@ export default class Data implements DataType {
             Titles:   this.titles
         };
         const json = JSON.stringify(obj);
-        const filename = "../../keyclickfarmer-savedata"+ (this.time % 2 === 0 ? "" : "-odd") +".json";
+        const filename = "../../../keyclickfarmer-savedata"+ (this.time % 2 === 0 ? "" : "-odd") +".json";
 
-        fs.writeFile(path.resolve(__dirname, filename), json, "utf8", (err : Error) => {
+        fs.writeFile(path.resolve(__dirname, filename), json, "utf8", (err: Error | null) => {
             if (err) {
                 window.showErrorMessage(err.message);
-                console.log(err);
             }
         });
-        console.log("save finish!");
     }
 
     public load() {
@@ -96,10 +93,8 @@ export default class Data implements DataType {
 
         // メインファイルの読み込み
         try {
-            config_main = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../keyclickfarmer-savedata.json"), "utf8"));
+            config_main = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../../keyclickfarmer-savedata.json"), "utf8"));
         } catch (e){
-            console.log(e);
-            console.log(">> No savedata.\n");
             loading_code += 1;
         }
 
@@ -107,8 +102,6 @@ export default class Data implements DataType {
         try {
             config_odd = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../keyclickfarmer-savedata-odd.json"), "utf8"));
         } catch (e){
-            console.log(e);
-            console.log(">> No odd-data.\n");
             loading_code += 2;
         }
 
@@ -131,7 +124,7 @@ export default class Data implements DataType {
         
         // データ読み込み
         if (config !== undefined) {
-            this.keyCount = this.safeDecimal(config.keyCount);
+            this.keyCount = Number(config.keyCount);
             this.time     = Number(config.time);
             this.pt       = this.safeDecimal(config.Point);
             this.allpt    = this.safeDecimal(config.allPoint);

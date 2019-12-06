@@ -37,5 +37,8 @@ Energy is consumed 1 in every second, recovering by 10 for one key-typing.
 - Refactored the code
 - Added the message on achievements
 
+### version 1.3.0
+- Added the input effects as achievements
+
 ## Contact
 karofuji2@gmail.com

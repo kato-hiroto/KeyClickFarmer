@@ -11,7 +11,7 @@ const commandString = "keyclickfarmer.powerup";
 // エディタ起動時（アクティベート時）の処理
 export function activate(context: ExtensionContext) {
 
-    const data = new Data(context);
+    const data = new Data();
     const logic = new GameLogic(data);
     const ui = new GameUI(data, logic, commandString);
     const decorate = new Decorate(data, logic);
