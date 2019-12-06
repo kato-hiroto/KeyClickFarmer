@@ -1,58 +1,28 @@
-import {window, workspace, DecorationOptions, TextEditorDecorationType} from "vscode";
+import {window, workspace, DecorationOptions, Range} from "vscode";
 
-type DecorationType = {
-    cursor: string,
-    backgroundColor: {
-        dark: string,
-		light: string,
-		highContrast: string
-    }
-};
-
-type RangeType = {
-    color: DecorationType,
+type RangeTimer = {
     option: DecorationOptions,
-    rate : number
+    time : number
 };
 
 export default class Decorate{
 
+    private readonly DURATION = 1;
+    private readonly CHECK_INTERVAL = 0.05;
     private activeEditor = window.activeTextEditor;
-    private decorateRanges: Array<RangeType> = new Array(0);
+    private decorateRanges: Array<RangeTimer> = new Array(0);
+
+    // 色の定義
+	private unit1ColorType = window.createTextEditorDecorationType({
+		backgroundColor: { id: 'extension.unit1BackGround' }
+	});
 
     constructor() {
         this.setDoCheckDocument();
-    }
-    
-    // 変更色の定義
-    private readonly color1: DecorationType = {
-        cursor: "crosshair",
-        backgroundColor: {
-            dark: "#9999FF55",
-            light: "#5555FF55",
-            highContrast: "#5555FF55"
-        }
-    };
-
-    // 色を薄くする
-    private changeColor(color: DecorationType, rate: number): TextEditorDecorationType {
-        const process = (_color: string, _rate: number): string => {
-            const colnum = parseInt(_color.substring(1), 16);
-            const rgb = (Math.floor(colnum / 0x100)).toString();
-            const newA = Math.floor((colnum % 0x100) * rate).toString();
-            return "#" + rgb.toString() + "0".repeat(2 - newA.length) + newA;
-        };
-        let _dark = process(color.backgroundColor.dark, rate);
-        let _light = process(color.backgroundColor.light, rate);
-        let _highContrast = process(color.backgroundColor.highContrast, rate);
-        return window.createTextEditorDecorationType({
-            cursor : color.cursor,
-            backgroundColor : {
-                dark: _dark,
-                light: _light,
-                highContrast: _highContrast
-            }
-        });
+        this.setDidChangeActiveTextEditor();
+        setInterval(() => {
+            this.clearDecorations();
+        }, this.CHECK_INTERVAL * 1000);
     }
 
     // 変更箇所検出関数の設定
@@ -60,32 +30,53 @@ export default class Decorate{
         workspace.onDidChangeTextDocument(changeEvent => {
             for (const change of changeEvent.contentChanges) {
                 const _range = change.range;
-                this.decorateRanges.push({color: this.color1, option: {range: _range}, rate: 1.05});
+                this.decorateRanges.push({option: {range: _range}, time: this.DURATION});
             }
-            this.drawDecorations(0.05);
+            this.drawDecorations();
        });
     }
 
+    // アクティブな画面変更時の設定
+    private setDidChangeActiveTextEditor() {
+        window.onDidChangeActiveTextEditor(editor => {
+            this.activeEditor = editor;
+            if (editor) {
+                this.drawDecorations();
+            }
+        });
+    }
+
     // 着色
-    public drawDecorations(duration: number) {
-        for(let i = 0; i < this.decorateRanges.length; i++) {
-            this.decorateRanges[i].rate = Math.max(this.decorateRanges[i].rate - duration, 0);
-            if (this.activeEditor !== undefined) {
-                const element = this.decorateRanges[i];
-                this.activeEditor.setDecorations(
-                    this.changeColor(element.color, element.rate), 
-                    new Array(element.option)
-                );
-                console.log("range : " + this.changeColor(element.color, element.rate));
-            }
+    private drawDecorations() {
+		if (!this.activeEditor) {
+			return;
+		}
+		const highLights: DecorationOptions[] = [];
+        for (let obj of this.decorateRanges) {
+            const startLine = obj.option.range.start.line;
+            const startChar = obj.option.range.start.character;
+            const endLine = obj.option.range.end.line;
+            const endChar = obj.option.range.end.character + 1;
+            highLights.push({range: new Range(startLine, startChar, endLine, endChar), hoverMessage: "aaa" });
         }
-        while(true) {
-            if (this.decorateRanges[0].rate <= 0) {
-                this.decorateRanges.shift();
-            } else {
-                break;
-            }
+        const range = highLights[highLights.length - 1].range;
+        console.log("range : " + range.start.toString() + " to " + range.start.toString())
+        this.activeEditor.setDecorations(this.unit1ColorType, highLights);
+    }
+
+    // 時間経過による更新
+    public clearDecorations() {
+        while (this.decorateRanges.length > 0 && this.decorateRanges[0].time < 0) {
+            this.decorateRanges.shift();
         }
+        for(let obj of this.decorateRanges) {
+            obj.time -= this.CHECK_INTERVAL;
+        }
+        this.drawDecorations();
+    }
+    
+    dispose() {
+        this.unit1ColorType.dispose();
     }
 }
 

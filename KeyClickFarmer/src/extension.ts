@@ -15,7 +15,7 @@ export function activate(context: ExtensionContext) {
     const logic = new GameLogic(data);
     const ui = new GameUI(data, logic, commandString);
     const decorate = new Decorate();
-    const event = new RealtimeEvent(logic, ui, decorate);
+    const event = new RealtimeEvent(logic, ui);
 
     let button = commands.registerCommand(commandString, () => {
         logic.doPushButton();
@@ -23,6 +23,7 @@ export function activate(context: ExtensionContext) {
         ui.showStatus();
     });
 
+    context.subscriptions.push(decorate);
     context.subscriptions.push(event);
     context.subscriptions.push(button);
 }

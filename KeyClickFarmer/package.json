@@ -2,7 +2,7 @@
     "name": "keyclick-farmer",
     "displayName": "KeyClick Farmer",
     "description": "This is the game of using key-typing counts.",
-    "version": "1.2.3",
+    "version": "1.2.4",
     "publisher": "iyokarof",
     "icon": "images/icon-large.png",
     "license": "MIT",
@@ -27,8 +27,19 @@
                 "command": "extension.keyclickfarmer-powerup",
                 "title": "KeyClickFarmer-PowerUp"
             }
-        ]
-    },
+        ],
+		"colors": [
+			{
+				"id": "extension.unit1BackGround",
+				"description": "Background decoration color for Unit1 bonus.",
+				"defaults": {
+					"dark": "#FF000055",
+					"light": "#FF000055",
+					"highContrast": "#FF000055"
+				}
+			}
+		]
+	},
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
