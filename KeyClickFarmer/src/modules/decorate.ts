@@ -1,4 +1,5 @@
 import {window, workspace, DecorationOptions, Disposable, Range, TextEditorDecorationType} from "vscode";
+import {simpleHighlight, ripple} from "./decoration-type";
 
 type RangeTimer = {
     option: DecorationOptions,
@@ -60,13 +61,8 @@ export default class Decorate{
 
     // 色の生成
     private createDecorationType(): void {
-        // 濃度に依存した色の生成
-        const process = (_color: string, _rate: number): string => {
-            const colnum = parseInt(_color.substring(1), 16);
-            const rgb = (Math.floor(colnum / 0x100)).toString(16);
-            const newA = Math.floor((colnum % 0x100) * _rate).toString(16);
-            return "#" + rgb.toString() + "0".repeat(2 - newA.length) + newA;
-        };
+        // エフェクトの選択
+        const effect = ripple;
 
         // 濃度を変えて複数生成
         this.effectColorsDispose();
@@ -76,11 +72,8 @@ export default class Decorate{
         let timer = this.DURATION;
         while(timer > 0) {
             this._effectColors.push(
-                window.createTextEditorDecorationType({
-                        backgroundColor: process(_color, timer / this.DURATION)
-                })
+                effect(_color, Math.max(0, Math.min(1, timer / this.DURATION)))
             );
-            console.log(process(_color, timer / this.DURATION));
             timer -= this.CHECK_INTERVAL;
         }
     }
@@ -99,8 +92,7 @@ export default class Decorate{
         
         // 着色個所の消去
         for (let obj of this._effectColors) {
-            const highLight = {range: new Range(0, 0, 0, 0), hoverMessage: "input"};
-            this._activeEditor.setDecorations(obj, new Array(highLight));
+            this._activeEditor.setDecorations(obj, new Array());
         }
 
         // 色別にリスト化

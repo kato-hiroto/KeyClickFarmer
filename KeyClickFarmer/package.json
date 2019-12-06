@@ -38,12 +38,17 @@
                 "keyclickfarmer.useInputEffect": {
                     "type": "boolean",
                     "default": true,
-                    "description": "An effect attaches to your key-typings."
+                    "description": "Add effects during your key typing."
+                },
+                "keyclickfarmer.maxUnitOfUsingEffect": {
+                    "type": "number",
+                    "default": true,
+                    "description": "Enter the unit number corresponding to the effect. (Makes the effect obtained in units less than the input value.)"
                 },
                 "keyclickfarmer.setEffectColor": {
                     "type": "string",
                     "default": "#FF000090",
-                    "description": "Effects color."
+                    "description": "Specify the color code of the effect."
                 }
             }
         }
