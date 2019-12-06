@@ -5,10 +5,8 @@ import GameLogic from "./modules/game-logic";
 import GameUI from "./modules/game-ui";
 import Decorate from "./modules/decorate";
 import RealtimeEvent from "./modules/realtime-event";
-import Decimal from "./modules/decimal";
 
 const commandString = "keyclickfarmer.powerup";
-const cheatCommand = "keyclickfarmer.cheatofchangestatus";
 
 // エディタ起動時（アクティベート時）の処理
 export function activate(context: ExtensionContext) {
@@ -24,14 +22,8 @@ export function activate(context: ExtensionContext) {
         ui.showMessage();
         ui.showStatus();
     });
-    
-    let cheat = commands.registerCommand(cheatCommand, () => {
-        data.addPt(new Decimal("10000000000000000000000"));
-        data.unit += 4;
-    });
 
     context.subscriptions.push(decorate);
     context.subscriptions.push(event);
     context.subscriptions.push(button);
-    context.subscriptions.push(cheat);
 }

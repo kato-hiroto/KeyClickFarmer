@@ -26,10 +26,6 @@
             {
                 "command": "keyclickfarmer.powerup",
                 "title": "KeyClickFarmer-PowerUp"
-            },
-            {
-                "command": "keyclickfarmer.cheatofchangestatus",
-                "title": "KeyClickFarmer-cheatOfChangeStatus"
             }
         ],
         "configuration": {
