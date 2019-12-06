@@ -1,7 +1,7 @@
 "use strict";
-import {ExtensionContext} from "vscode";
+import {window} from "vscode";
 import Decimal from "./decimal";
-import * as fs from "fs";
+var fs = require("fs");
 var path = require("path");
 
 type InputType = {
@@ -16,7 +16,7 @@ type InputType = {
 };
 
 type DataType = {
-    keyCount: number;
+    keyCount: Decimal;
     time: number;
     pt: Decimal;
     allpt: Decimal;
@@ -31,7 +31,7 @@ export default class Data implements DataType {
 
     public readonly energy_max = 10800;
 
-    public keyCount: number = 0;
+    public keyCount: Decimal = new Decimal("0");
     public time: number = 0;
     public pt: Decimal = new Decimal("0");
     public allpt: Decimal = new Decimal("0");
@@ -40,12 +40,13 @@ export default class Data implements DataType {
     public energy: number = this.energy_max;
     public titles: string = "";
 
-    constructor(private context: ExtensionContext) {
+    constructor() {
         this.load();
     }
     
     public static addComma(value: number | Decimal, fix: boolean = true) : string{
         // 数値にコンマをつけて表示
+        console.log(value);
         return (fix ? new Decimal(value).toString(2) : value.toString()).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
     }
 
@@ -56,49 +57,49 @@ export default class Data implements DataType {
         return E_str + X_str + "pt";
     }
 
-    public addPt(pt: Decimal): void {
+    public addPt(pt: Decimal) {
         // ポイント加算を効率よくやる
         this.pt.add(pt, true);
         this.allpt.add(pt, true);
     }
 
-    public save(): void {
-        this.context.globalState.update("keyCount", this.keyCount.toString());
-        this.context.globalState.update("time", this.time);
-        this.context.globalState.update("pt", this.pt.toString());
-        this.context.globalState.update("allpt", this.allpt.toString());
-        this.context.globalState.update("power", this.power.toString());
-        this.context.globalState.update("energy", this.energy);
-        this.context.globalState.update("unit", this.unit);
-        this.context.globalState.update("titles", this.titles);
+    public save() {
+        // ファイル保存
+        const obj: InputType = {
+            keyCount: this.keyCount.toString(),
+            time:     this.time.toString(),
+            Point:    this.pt.toString(),
+            allPoint: this.allpt.toString(),
+            Power:    this.power.toString(),
+            Energy:   this.energy.toString(),
+            Unit:     this.unit.toString(),
+            Titles:   this.titles
+        };
+        const json = JSON.stringify(obj);
+        const filename = "../../keyclickfarmer-savedata"+ (this.time % 2 === 0 ? "" : "-odd") +".json";
+
+        fs.writeFile(path.resolve(__dirname, filename), json, "utf8", (err : Error) => {
+            if (err) {
+                window.showErrorMessage(err.message);
+                console.log(err);
+            }
+        });
+        console.log("save finish!");
     }
 
-    public load(): void {
-        // Storeの読み込み
-        const config = this.loadFile();
-        if (config === undefined || this.context.globalState.get("time", 0) > Number(config.time)) {
-            this.keyCount = this.context.globalState.get("keyCount", 0);
-            this.time = this.context.globalState.get("time", 0);
-            this.pt = new Decimal(this.context.globalState.get("pt", 0));
-            this.allpt = new Decimal(this.context.globalState.get("allpt", 0));
-            this.power = new Decimal(this.context.globalState.get("power", 1));
-            this.energy = this.context.globalState.get("energy", 0);
-            this.unit = this.context.globalState.get("unit", 0);
-            this.titles = this.context.globalState.get("titles", "");
-        }
-    }
-
-    public loadFile(): InputType | undefined{
-        // 負の遺産 ファイル読み込み
+    public load() {
+        // ファイル読み込み
         let config: InputType | undefined = undefined;
         let config_main: InputType | undefined;
         let config_odd: InputType | undefined;
-        let loading_code : number = 0;        
+        let loading_code : number = 0;
 
         // メインファイルの読み込み
         try {
-            config_main = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../../keyclickfarmer-savedata.json"), "utf8"));
+            config_main = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../keyclickfarmer-savedata.json"), "utf8"));
         } catch (e){
+            console.log(e);
+            console.log(">> No savedata.\n");
             loading_code += 1;
         }
 
@@ -106,6 +107,8 @@ export default class Data implements DataType {
         try {
             config_odd = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../keyclickfarmer-savedata-odd.json"), "utf8"));
         } catch (e){
+            console.log(e);
+            console.log(">> No odd-data.\n");
             loading_code += 2;
         }
 
@@ -127,7 +130,16 @@ export default class Data implements DataType {
         }
         
         // データ読み込み
-        return config;
+        if (config !== undefined) {
+            this.keyCount = this.safeDecimal(config.keyCount);
+            this.time     = Number(config.time);
+            this.pt       = this.safeDecimal(config.Point);
+            this.allpt    = this.safeDecimal(config.allPoint);
+            this.power    = this.safeDecimal(config.Power);
+            this.energy   = Number(config.Energy);
+            this.unit     = Number(config.Unit);
+            this.titles   = String(config.Titles);
+        }
     }
 
     private safeDecimal(obj: string | Decimal | undefined): Decimal {
