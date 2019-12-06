@@ -32,17 +32,6 @@
                 "title": "KeyClickFarmer-cheatOfChangeStatus"
             }
         ],
-        "colors": [
-            {
-                "id": "keyclickfarmer.effectBackGround",
-                "description": "decoration background color",
-                "defaults": {
-                    "dark": "#FF000055",
-                    "light": "#FF000055",
-                    "highContrast": "#FF000055"
-                }
-            }
-        ],
         "configuration": {
             "title": "KeyClickFarmer",
             "properties": {
@@ -50,6 +39,11 @@
                     "type": "boolean",
                     "default": true,
                     "description": "An effect attaches to your key-typings."
+                },
+                "keyclickfarmer.setEffectColor": {
+                    "type": "string",
+                    "default": "#FF000090",
+                    "description": "Effects color."
                 }
             }
         }

@@ -1,7 +1,7 @@
 "use strict";
 import {ExtensionContext} from "vscode";
 import Decimal from "./decimal";
-import * as fs from 'fs'
+import * as fs from "fs";
 var path = require("path");
 
 type InputType = {
