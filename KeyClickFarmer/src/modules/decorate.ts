@@ -70,7 +70,7 @@ export default class Decorate{
         let effect: (_color: string, _rate: number) => TextEditorDecorationType;
         let limit = workspace.getConfiguration().get("keyclickfarmer.maxUnitOfUsingEffect");
         let unit = Math.min((limit !== undefined ? Number(limit) : 200), this._data.unit);
-        if(unit > 4){
+        if(unit >= 2){
             effect = ripple;
         } else {
             effect = simpleHighlight;
@@ -100,7 +100,7 @@ export default class Decorate{
     private drawDecorations(): void {
         if (!this._activeEditor || 
             !workspace.getConfiguration().get("keyclickfarmer.useInputEffect") ||
-            this._data.unit < 1) {
+            this._data.unit === 0) {
             return;
         }
         

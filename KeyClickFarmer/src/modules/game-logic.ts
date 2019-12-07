@@ -61,11 +61,14 @@ export default class GameLogic {
 
     public doPushButton() {
         // PowerUpボタンを押したとき
-        let pt    = new Decimal(this._data.pt);
-        let cost  = new Decimal(100);
         let digit = 0;
-        let power = new Decimal(0.01);
-        let powerUpRate = this._data.unit % 20 > 0 ? 10 + 7 * Math.pow(0.85, this._data.unit % 20 - 1) : 20;
+        const pt    = new Decimal(this._data.pt);
+        const cost  = new Decimal(100);
+        const power = new Decimal(0.01);
+        const pur1 = 20;
+        const pur2 = 10 + 7 * Math.pow(0.85, this._data.unit % 20 - 1);
+        const pur3 = 12;
+        const powerUpRate = this._data.unit % 20 <= 0 ? pur1 : Math.max(pur2, pur3);
 
         // PowerUp量を計算
         while (pt.isBiggerThan(1000, true)) {
