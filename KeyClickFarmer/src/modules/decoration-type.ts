@@ -1,15 +1,15 @@
 import {window, TextEditorDecorationType} from "vscode";
 
-// 濃度を変化させた色の生成
 const process = (_color: string, _rate: number): string => {
+    // 濃度を変化させた色の生成
     const colnum = parseInt(_color.substring(1), 16);
     const rgb = (Math.floor(colnum / 0x100)).toString(16);
     const newA = Math.floor((colnum % 0x100) * _rate).toString(16);
     return "#" + "0".repeat(6 - rgb.length) + rgb.toString() + "0".repeat(2 - newA.length) + newA;
 };
 
-// CSS文字列に変換
 const cssString = (obj: any): string => {
+    // CSS文字列に変換
     return Object.keys(obj).map(key => {
         const value = obj[key];
         if (typeof value === "string" || typeof value === "number") {
@@ -18,15 +18,15 @@ const cssString = (obj: any): string => {
     }).join(" ");
 };
 
-// シンプルなハイライト
 export const simpleHighlight = (_color: string, _rate: number): TextEditorDecorationType => {
+    // シンプルなハイライト
     return window.createTextEditorDecorationType({
         backgroundColor: process(_color, _rate)
     });
 };
 
-// 波紋
 export const ripple = (_color: string, _rate: number): TextEditorDecorationType => {
+    // 波紋
     const css = {
         "position"          : `absolute`,
         "display"           : `inline-block`,

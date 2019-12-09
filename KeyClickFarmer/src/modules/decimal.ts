@@ -13,23 +13,22 @@ export default class Decimal implements Number {
     
     // 継承
     toFixed(fractionDigits?: number | undefined): string {
-        return (this.value as number).toFixed(fractionDigits);
+        return this.last16digits.toFixed(fractionDigits);
     }
     toExponential(fractionDigits?: number | undefined): string {
-        return (this.value as number).toExponential(fractionDigits);
+        return this.last16digits.toExponential(fractionDigits);
     }
     toPrecision(precision?: number | undefined): string {
-        return (this.value as number).toPrecision(precision);
+        return this.last16digits.toPrecision(precision);
     }
     valueOf(): number {
-        return this.value as number;
+        return this.last16digits;
     }
     toLocaleString(locales?: string | string[] | undefined, options?: Intl.NumberFormatOptions | undefined): string {
-        return (this.value as number).toLocaleString(locales, options);
+        return this.last16digits.toLocaleString(locales, options);
     }
 
-    // 値のgetter, setter
-    get value(): number | string | Decimal {
+    get last16digits(): number {
         return this._intValue[1] + this._intValue[0] / Decimal.DIGIT10;
     } 
 

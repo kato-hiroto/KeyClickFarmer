@@ -46,7 +46,7 @@ export default class GameLogic {
             this._data.energy -= 1;
         }
         this._data.time += 1;
-        this._data.save();
+        // this._data.save();
     }
     
     public doKeyClick() {

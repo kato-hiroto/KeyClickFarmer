@@ -23,6 +23,7 @@ export default class GameUI{
     }
 
     public showMessage(): void {
+        // 出力ウィンドウに表示
         this._overview.clear();
         this._overview.append(this.showPower() + this.showInfo());
         this._overview.show(true);

@@ -30,8 +30,8 @@ export default class Decorate{
         }, this.CHECK_INTERVAL * 1000);
     }
 
-    // 変更箇所検出関数の設定
     private setDoCheckDocument(subscriptions: Disposable[]) {
+        // 変更箇所検出関数の設定
         return workspace.onDidChangeTextDocument(changeEvent => {
             if (this._data.unit !== this._logic.lastUnitBeforePowerUp) {
                 this.createDecorationType();
@@ -47,8 +47,8 @@ export default class Decorate{
        }, this, subscriptions);
     }
 
-    // アクティブな画面変更時の設定
     private setDidChangeActiveTextEditor(subscriptions: Disposable[]): void {
+        // アクティブな画面変更時の設定
         window.onDidChangeActiveTextEditor(editor => {
             this._activeEditor = editor;
             if (editor) {
@@ -57,14 +57,13 @@ export default class Decorate{
         }, this, subscriptions);
     }
 
-    // 設定変更時
     private setChangeConfig(subscriptions: Disposable[]): void {
+        // 設定変更時
         workspace.onDidChangeConfiguration(e => {
             this.createDecorationType();
         }, this, subscriptions);
     }
 
-    // 色の生成
     private createDecorationType(): void {
         // エフェクトの選択
         let effect: (_color: string, _rate: number) => TextEditorDecorationType;
@@ -90,14 +89,14 @@ export default class Decorate{
         }
     }
 
-    // 色の取得
     private getColorIndex(time: number): number {
+        // 色の取得
         const _index = Math.floor((this.DURATION - time) / this.CHECK_INTERVAL);
         return Math.max(0, Math.min(this._effectColors.length - 1, _index));
     }
 
-    // 着色
     private drawDecorations(): void {
+        // エフェクト発生条件
         if (!this._activeEditor || 
             !workspace.getConfiguration().get("keyclickfarmer.useInputEffect") ||
             this._data.unit === 0) {
@@ -133,8 +132,8 @@ export default class Decorate{
         }
     }
 
-    // 時間経過による更新
     private clearDecorations(): void {
+        // 時間経過による更新
         while (this._decorateRanges.length > 0 && this._decorateRanges[0].time < 0) {
             this._decorateRanges.shift();
         }

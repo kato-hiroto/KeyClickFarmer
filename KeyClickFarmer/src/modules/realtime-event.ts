@@ -2,14 +2,11 @@
 import {window, Disposable} from "vscode";
 import GameLogic from "./game-logic";
 import GameUI from "./game-ui";
-// import Decorate from "./decorate";
 
-// 自動実行とキータイプへの反応
 export default class RealtimeEvent {
     
     private _disposable: Disposable;
 
-    // constructor(private _logic: GameLogic, private _ui: GameUI, private _decorate: Decorate) {
     constructor(private _logic: GameLogic, private _ui: GameUI) {
         let subscriptions: Disposable[] = [];
         this.startTimer();
