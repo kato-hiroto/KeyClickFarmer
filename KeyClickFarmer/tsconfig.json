@@ -15,7 +15,7 @@
         // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
         // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
         // "noUnusedParameters": true,  /* Report errors on unused parameters. */
-        "types": ["node"]
+        "types": ["node", "jest", "mocha"]
     },
     "exclude": [
         "node_modules",
@@ -27,7 +27,7 @@
         "src/modules/decimal.ts",
         "src/modules/game-logic.ts",
         "src/modules/game-ui.ts",
-        "src/modules/realtime-event.ts"
-        // "src/test/decimal.test.ts"
+        "src/modules/realtime-event.ts",
+        "src/test/decimal.test.ts"
     ]
 }

@@ -112,6 +112,18 @@ describe("test Decimal", () => {
         assert.equal(target2.isBiggerThan(other2), true);
         assert.equal(target3.equal(other3), true);
     });
+    
+    it("大小チェック2", () => {
+        const target1 = new Decimal("123456789123456789");
+        const target2 = new Decimal("0.1");
+        const target3 = new Decimal("12345.67");
+        const other1 = new Decimal("100");
+        const other2 = new Decimal("123456789123456789");
+        const other3 = new Decimal("99999999999999999999999999999999");
+        assert.equal(target1.isBiggerThan(other1), false);
+        assert.equal(target2.isBiggerThan(other2), true);
+        assert.equal(target3.equal(other3), true);
+    });
 });
 
 // public toNumbers(): Array<number> 
