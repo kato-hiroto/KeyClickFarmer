@@ -100,7 +100,7 @@ export default class Data implements DataType {
 
         // 第二ファイルの読み込み
         try {
-            config_odd = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../keyclickfarmer-savedata-odd.json"), "utf8"));
+            config_odd = JSON.parse(fs.readFileSync(path.resolve(__dirname, "../../../keyclickfarmer-savedata-odd.json"), "utf8"));
         } catch (e){
             loading_code += 2;
         }
