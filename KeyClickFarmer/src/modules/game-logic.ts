@@ -143,12 +143,12 @@ export default class GameLogic {
             // 修羅 単位が13未満
             baseTitle = "Abyss-Worker";
 
-        } else if (baseUnit < 16) {
+        } else if (baseUnit < 15) {
             // 極めし者 単位が16未満
             baseTitle = "KeyClick-Master";
 
-        } else if (baseUnit < 20) {
-            // 限界突破者 単位が20未満
+        } else if (baseUnit < 18) {
+            // 限界突破者 単位が18未満
             baseTitle = "Limit-Breaker";
             
         } else {

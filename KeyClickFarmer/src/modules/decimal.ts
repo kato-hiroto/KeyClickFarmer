@@ -131,7 +131,7 @@ export default class Decimal implements Number {
     public mul(affector: number, destructive: Boolean = false): Decimal{
         if (destructive) {
             // 破壊的 : 数値との乗算
-            const b : number = new Decimal(affector).value as number;            
+            const b : number = new Decimal(affector).last16digits as number;            
             for (let i = 0; i < Decimal.INT; i++) {
                 this._intValue[i] *= b;
             }            

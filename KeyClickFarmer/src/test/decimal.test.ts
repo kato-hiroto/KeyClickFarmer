@@ -4,6 +4,15 @@ import Decimal from "../modules/decimal";
 
 describe("test Decimal", () => {
 
+    it("変換チェック", () => {
+        const target1 = new Decimal("0012345678.06250000");
+        const target2 = new Decimal(12345678.06250000);
+        const target3 = new Decimal(target1);
+        assert.equal(target1.toString(), target2.toString());
+        assert.equal(target2.toString(), target3.toString());
+        assert.equal(target3.toString(), target1.toString());
+    });
+
     it("保存チェック", () => {
         const target = new Decimal("56781234567812345678");
         assert.equal(target.toNumbers()[0], 0);
